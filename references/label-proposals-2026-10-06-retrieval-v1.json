@@ -1,0 +1,525 @@
+{
+  "schema_version": 1,
+  "proposal_version": "retrieval-label-proposals-2026-10-06-v1",
+  "status": "proposed",
+  "human_reviewed": false,
+  "eligible_for_scoring": false,
+  "adoption_requires_human": true,
+  "created_date": "2026-10-06",
+  "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+  "source_checkout": "/private/tmp/jev-eval-click",
+  "baseline_files_sha256": {
+    "references/real-evaluation-tasks.json": "0514eacba27ad1feb774b7a9af24a33b0fbf93b03409c729f73c13f387b1b9c8",
+    "references/evaluation-2026-10-06.md": "0825d734f945209052e85eccfd0444960c32db2b3bef076f2d3eaac3b634f1e3",
+    "references/human-review-2026-10-06.md": "692390cf429ec35599f1df46b7e8e7074e101429342b5bbe9c8b929fd4ba3147",
+    "references/runs/2026-10-06/range-gap-diagnostic.json": "c4ef21a495c6c5492da24d208c678aae93b02ef5d50de61f93a4e100c2ea7f4e",
+    "references/runs/2026-10-06/hit-bound-diagnostic.json": "5d53c86f478f2bebf8b4bffc5831775eea69d55909bc18a3e7c3004fa583f119"
+  },
+  "constraints": [
+    "Original tasks, gold, human_reviewed, results, and split remain unchanged.",
+    "No Jev calls, reranking, re-evaluation, or rescoring performed.",
+    "Split-only proposals remove only cross-unit separator blank lines; keep AST reading-unit costs separate.",
+    "Do not compare original versus revised complete-range fractions without explaining the changed denominator.",
+    "Mutually exclusive necessity alternatives must not be applied automatically."
+  ],
+  "proposals": [
+    {
+      "id": "boundary-choice",
+      "task_id": "choice-case",
+      "status": "proposed",
+      "human_reviewed": false,
+      "semantic_judgment": "provisional_model_review",
+      "action": "split_by_top_level_test",
+      "original_task": "Using click.Choice with [\"Orange\", \"Apple\"] and case_sensitive=False, explain why inputs \"apple\" and \"oRANGe\" return the original declared spelling, while \"grape\" fails. Locate conversion and tests, distinguish this from normalizing option names, and explain how a context token normalization function composes with case folding.",
+      "original_ranges": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 530,
+          "end_line": 571
+        }
+      ],
+      "suggested_ranges": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 530,
+          "end_line": 560
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 563,
+          "end_line": 571
+        }
+      ],
+      "reason": "两个顶层测试之间的561–562是空行；拆分保留所有原非空证据，不把跨测试分隔空行当成必要语义。",
+      "human_question": "是否批准只拆范围，并保留两个测试暂定必要？",
+      "source_evidence": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 530,
+          "end_line": 560,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L530-L560",
+          "sha256_utf8_range": "814a5f46791dd1429ea12fca4e24fb9793f1ae05ec1a65e0fac450f3bf020f2f"
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 563,
+          "end_line": 571,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L563-L571",
+          "sha256_utf8_range": "72974c4e9f207068720886b03592787285e8dee75298d146ba4f4590a1e43653"
+        }
+      ]
+    },
+    {
+      "id": "boundary-int-range",
+      "task_id": "int-range-clamp",
+      "status": "proposed",
+      "human_reviewed": false,
+      "semantic_judgment": "provisional_model_review",
+      "action": "split_by_top_level_test",
+      "original_task": "Using click.IntRange, locate how clamp handles values outside integer bounds. Explain the result of IntRange(0, 5, min_open=True, clamp=True) for input \"0\", and of an open maximum 5 for input \"5\". Compare failure without clamp, unbounded sides, and why a float range refuses open-bound clamp; identify existing boundary tests.",
+      "original_ranges": [
+        {
+          "path": "tests/test_types.py",
+          "start_line": 12,
+          "end_line": 51
+        }
+      ],
+      "suggested_ranges": [
+        {
+          "path": "tests/test_types.py",
+          "start_line": 12,
+          "end_line": 32
+        },
+        {
+          "path": "tests/test_types.py",
+          "start_line": 35,
+          "end_line": 51
+        }
+      ],
+      "reason": "参数化正常/夹取测试与失败测试之间的33–34是空行；装饰器与函数保持同一范围。",
+      "human_question": "是否将成功/夹取与失败用例视为两个必要证据单元？",
+      "source_evidence": [
+        {
+          "path": "tests/test_types.py",
+          "start_line": 12,
+          "end_line": 32,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_types.py#L12-L32",
+          "sha256_utf8_range": "40b1b7ed528b4226b40e34d43b819be7b6b39a2c3f654809143391a3bc72960a"
+        },
+        {
+          "path": "tests/test_types.py",
+          "start_line": 35,
+          "end_line": 51,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_types.py#L35-L51",
+          "sha256_utf8_range": "8c91bed2f3d8b1390e9981f253b47f56d6b3906b028234493fedb5b79349658d"
+        }
+      ]
+    },
+    {
+      "id": "boundary-cleanup-enter",
+      "task_id": "cleanup-order",
+      "status": "proposed",
+      "human_reviewed": false,
+      "semantic_judgment": "provisional_model_review",
+      "action": "split_by_method",
+      "original_task": "A group opens resources for its subcommands and registers cleanup callbacks. Locate how context managers and plain cleanup functions stay usable until the command context is finished. Explain why nested entry does not close resources early and whether the current context is still available inside cleanup; identify existing tests.",
+      "original_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 461,
+          "end_line": 476
+        }
+      ],
+      "suggested_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 462,
+          "end_line": 465
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 467,
+          "end_line": 476
+        }
+      ],
+      "reason": "461是前导空行，466是两个方法间空行；保留depth增加、push、depth减少、close-before-pop完整代码。",
+      "human_question": "是否批准拆开__enter__和__exit__？不得把final缺失469–476误当空行问题。",
+      "source_evidence": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 462,
+          "end_line": 465,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L462-L465",
+          "sha256_utf8_range": "934b3d91ad76e072b7e729461d5773da3b811937d2bb894213bb293ad73174f8"
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 467,
+          "end_line": 476,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L467-L476",
+          "sha256_utf8_range": "9f87fd8048b1ffb5feb7f8e3e4ff25a393f031b4797889623ffa4ad711b5320a"
+        }
+      ]
+    },
+    {
+      "id": "boundary-cleanup-registration",
+      "task_id": "cleanup-order",
+      "status": "proposed",
+      "human_reviewed": false,
+      "semantic_judgment": "provisional_model_review",
+      "action": "split_by_method",
+      "original_task": "A group opens resources for its subcommands and registers cleanup callbacks. Locate how context managers and plain cleanup functions stay usable until the command context is finished. Explain why nested entry does not close resources early and whether the current context is still available inside cleanup; identify existing tests.",
+      "original_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 558,
+          "end_line": 606
+        }
+      ],
+      "suggested_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 558,
+          "end_line": 585
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 587,
+          "end_line": 597
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 599,
+          "end_line": 606
+        }
+      ],
+      "reason": "with_resource、call_on_close、close三个方法之间的586/598是空行；拆分保留三种API及ExitStack执行路径。",
+      "human_question": "三个方法是否均必要，而跨方法分隔空行不必要？",
+      "source_evidence": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 558,
+          "end_line": 585,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L558-L585",
+          "sha256_utf8_range": "24d959736acecccce8f6f95c896aff19cc9f5f4eea2afb3e51cba9dfae2dfed4"
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 587,
+          "end_line": 597,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L587-L597",
+          "sha256_utf8_range": "99a4422bc86a3477864c3d313c3180b9f85716f187ac3003571635db4f007745"
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 599,
+          "end_line": 606,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L599-L606",
+          "sha256_utf8_range": "eae17d91782772b394edcddab1a1e4cc643d1f38d4db230f5bd269f376fc5013"
+        }
+      ]
+    },
+    {
+      "id": "boundary-cleanup-tests",
+      "task_id": "cleanup-order",
+      "status": "proposed",
+      "human_reviewed": false,
+      "semantic_judgment": "provisional_model_review",
+      "action": "split_by_top_level_test",
+      "original_task": "A group opens resources for its subcommands and registers cleanup callbacks. Locate how context managers and plain cleanup functions stay usable until the command context is finished. Explain why nested entry does not close resources early and whether the current context is still available inside cleanup; identify existing tests.",
+      "original_ranges": [
+        {
+          "path": "tests/test_context.py",
+          "start_line": 219,
+          "end_line": 253
+        }
+      ],
+      "suggested_ranges": [
+        {
+          "path": "tests/test_context.py",
+          "start_line": 219,
+          "end_line": 237
+        },
+        {
+          "path": "tests/test_context.py",
+          "start_line": 240,
+          "end_line": 253
+        }
+      ],
+      "reason": "close-before-pop和with_resource测试之间238–239是空行。原test_multi_enter103–120保留；它的原始缺口含非空行。",
+      "human_question": "是否批准拆开两个测试，并保留103–120作为嵌套不提前关闭的必要证据？",
+      "source_evidence": [
+        {
+          "path": "tests/test_context.py",
+          "start_line": 219,
+          "end_line": 237,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_context.py#L219-L237",
+          "sha256_utf8_range": "779843838f61ec26d646895d4308b8ab7fa0984d7155c1dedaf895b700f73e1c"
+        },
+        {
+          "path": "tests/test_context.py",
+          "start_line": 240,
+          "end_line": 253,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_context.py#L240-L253",
+          "sha256_utf8_range": "3a9a425e7a87490183a787ca32431be0189c311689208b4c816b148c56d6b8a0"
+        }
+      ]
+    },
+    {
+      "id": "boundary-default-help-tests",
+      "task_id": "default-help-empty",
+      "status": "proposed",
+      "human_reviewed": false,
+      "semantic_judgment": "provisional_model_review",
+      "action": "split_by_top_level_test",
+      "original_task": "An option has default=\"\" and show_default=True, but historically its empty default disappeared from help. Locate the release behavior that displays an empty string default and distinguish it from no default and an empty multiple-value default. Explain the rendering condition and formatting rather than only finding the regression assertion.",
+      "original_ranges": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 789,
+          "end_line": 812
+        }
+      ],
+      "suggested_ranges": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 789,
+          "end_line": 794
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 797,
+          "end_line": 802
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 805,
+          "end_line": 812
+        }
+      ],
+      "reason": "三个测试分别证明空字符串、无默认、空multiple；795–796/803–804是分隔空行。三种语义均被原任务明确要求。",
+      "human_question": "是否批准三个测试独立成范围？原始召回缺少797–802的None对照不能删除来改善数字。",
+      "source_evidence": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 789,
+          "end_line": 794,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L789-L794",
+          "sha256_utf8_range": "4ad0d394391ec5f62d7b66d294d96324a73ef9ee066c9716843cb661a2e90076"
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 797,
+          "end_line": 802,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L797-L802",
+          "sha256_utf8_range": "a559a697c8b7af3e3af76d3706c5b49e5fd1e5bd5b9e702bf2fa24b9b8843626"
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 805,
+          "end_line": 812,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L805-L812",
+          "sha256_utf8_range": "272f0ddfcf32486f60556e2f1748dd29f70127c92eea50612b0995d6f38abd9c"
+        }
+      ]
+    },
+    {
+      "id": "necessity-choice-duplicate",
+      "task_id": "choice-case",
+      "status": "proposed",
+      "human_reviewed": false,
+      "semantic_judgment": "provisional_model_review",
+      "action": "alternative_demote_redundant_supporting_test",
+      "original_task": "Using click.Choice with [\"Orange\", \"Apple\"] and case_sensitive=False, explain why inputs \"apple\" and \"oRANGe\" return the original declared spelling, while \"grape\" fails. Locate conversion and tests, distinguish this from normalizing option names, and explain how a context token normalization function composes with case folding.",
+      "original_ranges": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 530,
+          "end_line": 571
+        }
+      ],
+      "suggested_ranges": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 530,
+          "end_line": 560
+        }
+      ],
+      "reason": "536–542已证明Apple/Orange原拼写；563–571重复相同Apple输入/输出。Locate conversion and tests不必然要求每个重复测试都成为累积必要范围。",
+      "human_question": "563–571是必须独立找到的回归证据，还是可选佐证？仅在人工确认后考虑降级。",
+      "source_evidence": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 530,
+          "end_line": 560,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L530-L560",
+          "sha256_utf8_range": "814a5f46791dd1429ea12fca4e24fb9793f1ae05ec1a65e0fac450f3bf020f2f"
+        }
+      ],
+      "optional_context_ranges": [
+        {
+          "path": "tests/test_options.py",
+          "start_line": 563,
+          "end_line": 571
+        }
+      ],
+      "mutually_exclusive_with": [
+        "boundary-choice"
+      ],
+      "preferred_until_human_review": "boundary-choice"
+    },
+    {
+      "id": "necessity-command-forward-default-test",
+      "task_id": "command-forward",
+      "status": "proposed",
+      "human_reviewed": false,
+      "semantic_judgment": "provisional_model_review",
+      "action": "retain_pending_human_necessity_decision",
+      "original_task": "Using Context.forward and Context.invoke to call a second command, locate how forward fills omitted keyword arguments from the current command and how invoke fills remaining defaults. For current count=7, compare forward(target), invoke(target, count=42), and invoke(target) when target has default count=1. Explain return propagation and locate tests.",
+      "original_ranges": [
+        {
+          "path": "tests/test_commands.py",
+          "start_line": 235,
+          "end_line": 252
+        }
+      ],
+      "suggested_ranges": [
+        {
+          "path": "tests/test_commands.py",
+          "start_line": 235,
+          "end_line": 252
+        }
+      ],
+      "reason": "235–252直接覆盖ctx.invoke(other_cmd)的默认填充与返回传播，因此没有足够理由整体移除。default字符串转int与multiple空tuple是额外回归细节，原题未要求；不应扩展为验收知识。",
+      "human_question": "原题要求locate tests，24–41加实现是否足够？还是必须额外找到235–252才能证明默认填充与返回？",
+      "source_evidence": [
+        {
+          "path": "tests/test_commands.py",
+          "start_line": 235,
+          "end_line": 252,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_commands.py#L235-L252",
+          "sha256_utf8_range": "778a3b1c13c9fa46daed2a058cc03cbc27c8fcdf62a4e9659db926a44644d224"
+        }
+      ],
+      "optional_facts": [
+        "default=\"15\" is type-cast to int 15",
+        "multiple default becomes empty tuple"
+      ],
+      "suggested_acceptance_additions": []
+    },
+    {
+      "id": "scope-chain-result",
+      "task_id": "chain-result",
+      "status": "proposed",
+      "human_reviewed": false,
+      "semantic_judgment": "provisional_model_review",
+      "action": "narrow_acceptance_keep_reading_ranges",
+      "original_task": "A chain-enabled group builds a pipeline from return values of subcommands and passes them to a result callback with the group parameters. Locate the registration and invocation code. Explain return-value order, what the callback receives with no subcommand when invoke_without_command is enabled, and how this differs from a non-chain group; cite tests.",
+      "original_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 1575,
+          "end_line": 1618
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 1663,
+          "end_line": 1729
+        },
+        {
+          "path": "tests/test_chain.py",
+          "start_line": 88,
+          "end_line": 104
+        },
+        {
+          "path": "tests/test_chain.py",
+          "start_line": 127,
+          "end_line": 167
+        }
+      ],
+      "suggested_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 1575,
+          "end_line": 1618
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 1663,
+          "end_line": 1729
+        },
+        {
+          "path": "tests/test_chain.py",
+          "start_line": 88,
+          "end_line": 104
+        },
+        {
+          "path": "tests/test_chain.py",
+          "start_line": 127,
+          "end_line": 167
+        }
+      ],
+      "reason": "原题要求locate registration/invocation和返回合同，未明确要求多次result_callback注册的compose/replace语义。代码真实存在该行为，但事实正确不等于题目要求。暂保留整个注册函数阅读范围，单独提议缩窄criterion-3。",
+      "human_question": "是否将compose/replace从必答验收降为补充知识？注册位置与存储/调用路径仍须回答。",
+      "source_evidence": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 1575,
+          "end_line": 1618,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L1575-L1618",
+          "sha256_utf8_range": "236e82b6658c5c77a5609b74e794cf2cd0937e45d80e5566b4b84da229f9f962"
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 1663,
+          "end_line": 1729,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L1663-L1729",
+          "sha256_utf8_range": "80dd66f3ad5461493bfeef460e89667c20f655bf184addb0c8d7f2d1529a01c8"
+        },
+        {
+          "path": "tests/test_chain.py",
+          "start_line": 88,
+          "end_line": 104,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_chain.py#L88-L104",
+          "sha256_utf8_range": "c482cf5cf3fd9bb4d812c88530e189d60e0951b2992283e551d131c9e1b17a5c"
+        },
+        {
+          "path": "tests/test_chain.py",
+          "start_line": 127,
+          "end_line": 167,
+          "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_chain.py#L127-L167",
+          "sha256_utf8_range": "10dc60bf0a1663c0ccfde5feff85c11dc605450d79ca50f68d0f113b853c5e06"
+        }
+      ],
+      "original_acceptance": {
+        "id": "criterion-3",
+        "criterion": "Explain callback registration and replace.",
+        "points": 2
+      },
+      "suggested_acceptance": {
+        "id": "criterion-3",
+        "criterion": "Locate result_callback registration and its invocation through _result_callback, with result first and group parameters.",
+        "points": 2
+      },
+      "original_expected_answer_item": "Registration composes callbacks unless replace=True.",
+      "suggested_expected_answer_item": "result_callback returns a decorator that registers _result_callback; invoke calls it with the subcommand result/list and group parameters.",
+      "optional_context_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 1576,
+          "end_line": 1578
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 1595,
+          "end_line": 1596
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 1611,
+          "end_line": 1616
+        }
+      ]
+    }
+  ]
+}

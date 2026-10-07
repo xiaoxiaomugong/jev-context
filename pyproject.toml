@@ -1,0 +1,13 @@
+[project]
+name = "jev-context"
+version = "0.1.0"
+description = "Read-only local retrieval and Jev-scored budgeted reading advice"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+tokenizer = ["tiktoken>=0.7,<1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["fixtures"]

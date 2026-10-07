@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "description": "Fixed offline relevance responses. No external Jev request is made.",
+  "default": {"score": 1, "confidence": 0.85, "probabilities": [0.1, 0.8, 0.1, 0, 0]},
+  "responses": [
+    {"task_id": "invoice-rounding", "path": "billing/entry.py", "score": 4, "confidence": 0.95, "probabilities": [0, 0, 0, 0.1, 0.9]},
+    {"task_id": "invoice-rounding", "path": "billing/amounts.py", "score": 4, "confidence": 0.95, "probabilities": [0, 0, 0, 0.1, 0.9]},
+    {"task_id": "invoice-rounding", "path": "tests/test_billing_entry.py", "score": 3, "confidence": 0.95, "probabilities": [0, 0, 0.1, 0.9, 0]},
+    {"task_id": "auth-expiration", "path": "auth/entry.py", "score": 4, "confidence": 0.95, "probabilities": [0, 0, 0, 0.1, 0.9]},
+    {"task_id": "auth-expiration", "path": "auth/tokens.py", "score": 4, "confidence": 0.95, "probabilities": [0, 0, 0, 0.1, 0.9]},
+    {"task_id": "auth-expiration", "path": "tests/test_auth_entry.py", "score": 3, "confidence": 0.95, "probabilities": [0, 0, 0.1, 0.9, 0]},
+    {"task_id": "retry-exhaustion", "path": "worker/entry.py", "score": 4, "confidence": 0.95, "probabilities": [0, 0, 0, 0.1, 0.9]},
+    {"task_id": "retry-exhaustion", "path": "worker/retry.py", "score": 4, "confidence": 0.95, "probabilities": [0, 0, 0, 0.1, 0.9]},
+    {"task_id": "retry-exhaustion", "path": "tests/test_worker_entry.py", "score": 3, "confidence": 0.95, "probabilities": [0, 0, 0.1, 0.9, 0]}
+  ]
+}

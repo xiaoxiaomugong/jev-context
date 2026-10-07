@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "tasks": [
+    {
+      "id": "invoice-rounding",
+      "task": "定位发票半分钱舍入行为，阅读入口、金额计算及其边界测试。",
+      "terms": ["invoice rounding", "issue_invoice"],
+      "key_ranges": [
+        {"path": "billing/entry.py", "start_line": 4, "end_line": 9},
+        {"path": "billing/amounts.py", "start_line": 4, "end_line": 7},
+        {"path": "tests/test_billing_entry.py", "start_line": 4, "end_line": 6}
+      ]
+    },
+    {
+      "id": "auth-expiration",
+      "task": "定位过期令牌在边界时刻的拒绝逻辑，以及入口和对应测试。",
+      "terms": ["expired token", "authorize_request"],
+      "key_ranges": [
+        {"path": "auth/entry.py", "start_line": 4, "end_line": 9},
+        {"path": "auth/tokens.py", "start_line": 12, "end_line": 22},
+        {"path": "tests/test_auth_entry.py", "start_line": 4, "end_line": 10}
+      ]
+    },
+    {
+      "id": "retry-exhaustion",
+      "task": "定位网络操作重试耗尽时的异常行为、尝试次数和入口测试。",
+      "terms": ["retry exhaustion", "run_job"],
+      "key_ranges": [
+        {"path": "worker/entry.py", "start_line": 4, "end_line": 8},
+        {"path": "worker/retry.py", "start_line": 4, "end_line": 11},
+        {"path": "tests/test_worker_entry.py", "start_line": 4, "end_line": 17}
+      ]
+    }
+  ]
+}

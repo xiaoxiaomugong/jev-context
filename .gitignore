@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+.jev-context/
+.venv/
+.pytest_cache/
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+build/
+dist/
+*.egg-info/
+
+# Raw experiment logs and third-party source snapshots stay local.
+# Keep only the publication note and our frozen modules used by tests.
+/references/runs/**
+!/references/runs/**/
+!/references/runs/README.md
+!/references/runs/2026-10-06/retrieval-ablation/baseline/scripts/jev_context/retrieval.py
+!/references/runs/2026-10-06/retrieval-ablation/trial-v2/retrieval.py

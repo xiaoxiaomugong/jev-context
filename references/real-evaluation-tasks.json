@@ -1,0 +1,1978 @@
+{
+  "schema_version": 1,
+  "corpus_id": "click-8.1.8-source-grounded-v1",
+  "repository": {
+    "name": "pallets/click",
+    "url": "https://github.com/pallets/click",
+    "release": "8.1.8",
+    "commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+    "annotated_tag_object": "d4ecb8a89a52ad3faacf3f1c65065d08c1d11c14",
+    "local_checkout": "/private/tmp/jev-eval-click",
+    "release_url": "https://github.com/pallets/click/releases/tag/8.1.8",
+    "checkout_status": "clean_detached_release",
+    "source_license": "BSD-3-Clause"
+  },
+  "annotation": {
+    "status": "provisional_model_annotations",
+    "human_reviewed": false,
+    "task_authorship": "Ten documentation-derived authored questions and two retrospective questions derived from historical maintenance sources. Not twelve actual user tickets.",
+    "basis": "Fixed release interface, implementation and existing tests; no patch or ranking-driven labels.",
+    "source_quote_policy": "All source bases paraphrased."
+  },
+  "split_policy": {
+    "method": "preassigned_named_partition",
+    "frozen_before_candidate_generation": true,
+    "frozen_before_ranking_results": true,
+    "dev_count": 6,
+    "holdout_count": 6,
+    "dev": [
+      "choice-case",
+      "int-range-clamp",
+      "eager-version",
+      "command-forward",
+      "unknown-option-wrapper",
+      "atomic-output"
+    ],
+    "holdout": [
+      "environment-split",
+      "parameter-precedence",
+      "cleanup-order",
+      "resilient-help",
+      "chain-result",
+      "default-help-empty"
+    ],
+    "reader_tasks_frozen_before_scores": [
+      "choice-case",
+      "atomic-output",
+      "resilient-help",
+      "chain-result"
+    ],
+    "restriction": "No retrieval/scoring tuning from holdout outcomes."
+  },
+  "retrieval_protocol": {
+    "candidate_limit": 60,
+    "read_budget": 8000,
+    "list_budget": 1000,
+    "max_primary_c_candidates": 720,
+    "same_candidates_for_b_and_c": true,
+    "same_query_and_entry_hints_across_variants": true,
+    "only_model_input_fields": [
+      "task",
+      "terms",
+      "paths",
+      "symbols"
+    ],
+    "do_not_supply": [
+      "key_ranges",
+      "gold",
+      "sources",
+      "repository_commit",
+      "scenario_tags",
+      "reader_experiment"
+    ],
+    "term_rule": "Every term is a literal request substring; unknown entries have no path/symbol hints.",
+    "configuration_status": "Current pipeline defaults retained with no per-task cap tuning."
+  },
+  "tasks": [
+    {
+      "id": "choice-case",
+      "split": "dev",
+      "task": "Using click.Choice with [\"Orange\", \"Apple\"] and case_sensitive=False, explain why inputs \"apple\" and \"oRANGe\" return the original declared spelling, while \"grape\" fails. Locate conversion and tests, distinguish this from normalizing option names, and explain how a context token normalization function composes with case folding.",
+      "terms": [
+        "Choice",
+        "case_sensitive",
+        "normalization",
+        "case"
+      ],
+      "paths": [],
+      "symbols": [
+        "Choice"
+      ],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": true,
+      "entry": {
+        "mode": "known_public_entry",
+        "supplied_symbols": [
+          "Choice"
+        ],
+        "supplied_paths": [],
+        "supplied_configuration_names": [
+          "case_sensitive"
+        ],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/options.rst#L368-L395",
+          "basis": "Insensitive matching preserves the configured choice rather than the raw input.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand insensitive choice matching and returned values.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/options.rst#L368-L395",
+          "local_versioned_source": {
+            "path": "docs/options.rst",
+            "start_line": 368,
+            "end_line": 395
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "keyword_ambiguity",
+        "interface_implementation_tests",
+        "normalization_vs_conversion"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/types.py",
+          "start_line": 227,
+          "end_line": 248
+        },
+        {
+          "path": "src/click/types.py",
+          "start_line": 269,
+          "end_line": 305
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 530,
+          "end_line": 571
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/types.py",
+            "start_line": 227,
+            "end_line": 248,
+            "role": "public_interface",
+            "reason": "Defines the choice contract and case_sensitive default.",
+            "symbol": "Choice",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/types.py#L227-L248",
+            "sha256_utf8_range": "ef03db18843305768f8c6bf7217392a4a03950991d14ba03b78fdfb8ba22883f"
+          },
+          {
+            "path": "src/click/types.py",
+            "start_line": 269,
+            "end_line": 305,
+            "role": "implementation",
+            "reason": "Normalizes before casefold, maps normalized keys to original choices, and preserves input for failure.",
+            "symbol": "Choice.convert",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/types.py#L269-L305",
+            "sha256_utf8_range": "f65671f9ede04e68ba26fbb9804eb27a19b30eb2d2b8454d935b1a72f693c9a8"
+          },
+          {
+            "path": "tests/test_options.py",
+            "start_line": 530,
+            "end_line": 571,
+            "role": "existing_tests",
+            "reason": "Contrasts insensitive spellings, sensitive rejection, and exact original return spelling.",
+            "symbol": "test_case_insensitive_choice",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L530-L571",
+            "sha256_utf8_range": "03fec540b6f136b05db8e678bfa95f09b1f16e28805d540b305e31ddc0b1098a"
+          }
+        ],
+        "expected_answer": [
+          "apple returns Apple; oRANGe returns Orange; grape fails.",
+          "Mapping values retain original choices; input and keys are normalized.",
+          "Context normalization precedes casefold; this converts values, not option names.",
+          "Failure uses the original input and available choices."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Give both exact declared-spelling outputs and reject grape.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Explain normalized keys mapping to original values.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Explain normalization then casefold and distinguish option-name parsing.",
+            "points": 2
+          },
+          {
+            "id": "criterion-4",
+            "criterion": "Cite implementation plus a supporting test range.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "These necessary ranges are model proposed, not independently human reviewed."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "int-range-clamp",
+      "split": "dev",
+      "task": "Using click.IntRange, locate how clamp handles values outside integer bounds. Explain the result of IntRange(0, 5, min_open=True, clamp=True) for input \"0\", and of an open maximum 5 for input \"5\". Compare failure without clamp, unbounded sides, and why a float range refuses open-bound clamp; identify existing boundary tests.",
+      "terms": [
+        "IntRange",
+        "clamp",
+        "bounds",
+        "range"
+      ],
+      "paths": [],
+      "symbols": [
+        "IntRange"
+      ],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": false,
+      "entry": {
+        "mode": "known_public_entry",
+        "supplied_symbols": [
+          "IntRange"
+        ],
+        "supplied_paths": [],
+        "supplied_configuration_names": [
+          "clamp",
+          "min_open"
+        ],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/options.rst#L812-L843",
+          "basis": "Bounds may be open, closed or absent; clamping chooses an accepted boundary.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand number ranges and clamping.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/options.rst#L812-L843",
+          "local_versioned_source": {
+            "path": "docs/options.rst",
+            "start_line": 812,
+            "end_line": 843
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "interface_implementation_tests",
+        "inherited_implementation",
+        "boundary_semantics"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/types.py",
+          "start_line": 449,
+          "end_line": 478
+        },
+        {
+          "path": "src/click/types.py",
+          "start_line": 517,
+          "end_line": 540
+        },
+        {
+          "path": "src/click/types.py",
+          "start_line": 569,
+          "end_line": 591
+        },
+        {
+          "path": "tests/test_types.py",
+          "start_line": 12,
+          "end_line": 51
+        },
+        {
+          "path": "tests/test_types.py",
+          "start_line": 54,
+          "end_line": 62
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/types.py",
+            "start_line": 449,
+            "end_line": 478,
+            "role": "implementation",
+            "reason": "Inherited conversion compares bounds and dispatches clamp or failure.",
+            "symbol": "_NumberRangeBase.convert",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/types.py#L449-L478",
+            "sha256_utf8_range": "536e9a95c3e3341ed3099eb56412805748e0d2bd8606dc1b22cef7f1ffeffe47"
+          },
+          {
+            "path": "src/click/types.py",
+            "start_line": 517,
+            "end_line": 540,
+            "role": "public_interface_and_integer_implementation",
+            "reason": "Open integer bounds clamp one integer inward.",
+            "symbol": "IntRange",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/types.py#L517-L540",
+            "sha256_utf8_range": "1b3606f0b652d8f37f9706159dca37ab0566305eb00519519c7f6d1e43e9d689"
+          },
+          {
+            "path": "src/click/types.py",
+            "start_line": 569,
+            "end_line": 591,
+            "role": "float_contrast",
+            "reason": "Rejects unsupported open-bound float clamping.",
+            "symbol": "FloatRange",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/types.py#L569-L591",
+            "sha256_utf8_range": "2dbf38a31de8839cd3f4ff16a167e53a33fe36878ed97a12aec5431049bda803"
+          },
+          {
+            "path": "tests/test_types.py",
+            "start_line": 12,
+            "end_line": 51,
+            "role": "existing_tests",
+            "reason": "Includes accepted, rejected, clamped and unbounded boundary cases.",
+            "symbol": "test_range",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_types.py#L12-L51",
+            "sha256_utf8_range": "a8b339fe3aed1d49726887c0e2c979b23839f7df9bfa5bcc9e279d86f36bb196"
+          },
+          {
+            "path": "tests/test_types.py",
+            "start_line": 54,
+            "end_line": 62,
+            "role": "existing_tests",
+            "reason": "Verifies constructor and defensive clamp restrictions.",
+            "symbol": "test_float_range_no_clamp_open",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_types.py#L54-L62",
+            "sha256_utf8_range": "f853d864999754fa52e441bcb91586b534b2a6925d4de6bd713947d4bc3c0b09"
+          }
+        ],
+        "expected_answer": [
+          "The open integer examples return 1 and 4.",
+          "Absent bounds impose no limit; closed bounds allow equality.",
+          "Out-of-range input without clamp calls fail.",
+          "FloatRange rejects open-bound clamp with TypeError at construction; a mutated unsupported instance reaches a RuntimeError guard."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Give 1 and 4 with inward integer adjustment.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Explain inherited comparison, unbounded sides and failure without clamp.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Explain float open-bound restriction and cite tests.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "These necessary ranges are model proposed, not independently human reviewed."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "eager-version",
+      "split": "dev",
+      "task": "Using click.version_option, locate why a --version flag prints and exits even when a normal required option was omitted. Explain eager callback ordering, why the version boolean is absent from command arguments, and why resilient parsing suppresses this side effect; find implementation and existing ordering tests.",
+      "terms": [
+        "version_option",
+        "eager",
+        "required",
+        "callback"
+      ],
+      "paths": [],
+      "symbols": [
+        "version_option"
+      ],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": false,
+      "entry": {
+        "mode": "known_public_entry",
+        "supplied_symbols": [
+          "version_option"
+        ],
+        "supplied_paths": [],
+        "supplied_configuration_names": [],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/options.rst#L542-L588",
+          "basis": "Version reporting needs early evaluation, hidden values and a resilient-parsing guard.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand early exit before ordinary required-option validation.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/options.rst#L542-L588",
+          "local_versioned_source": {
+            "path": "docs/options.rst",
+            "start_line": 542,
+            "end_line": 588
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "interface_implementation_tests",
+        "callback_ordering",
+        "long_relevant_function"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/decorators.py",
+          "start_line": 476,
+          "end_line": 522
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 116,
+          "end_line": 140
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 1413,
+          "end_line": 1417
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 2358,
+          "end_line": 2367
+        },
+        {
+          "path": "tests/test_basic.py",
+          "start_line": 455,
+          "end_line": 495
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/decorators.py",
+            "start_line": 476,
+            "end_line": 522,
+            "role": "interface_wiring_and_implementation",
+            "reason": "Shows guard, printing, exit and is_eager/expose_value defaults.",
+            "symbol": "version_option",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/decorators.py#L476-L522",
+            "sha256_utf8_range": "469bcd32411f0e8a0e700f7a0a8f103ee866bbd1fd0735999edc56102ede01f8"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 116,
+            "end_line": 140,
+            "role": "ordering_implementation",
+            "reason": "Sorts eager parameters first then CLI occurrence.",
+            "symbol": "iter_params_for_processing",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L116-L140",
+            "sha256_utf8_range": "152d73aca9ad2784c60aee96b01ff3610ab6d1ad0d303a68d30b3453e44cf3c6"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 1413,
+            "end_line": 1417,
+            "role": "integration",
+            "reason": "Parsing invokes sorted parameter processing.",
+            "symbol": "Command.parse_args",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L1413-L1417",
+            "sha256_utf8_range": "576cbd4acd83727cfbe693c27ac8b968bcc887946119b138e7e9b96882bc99d0"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 2358,
+            "end_line": 2367,
+            "role": "required_validation",
+            "reason": "Required validation occurs when that parameter is processed.",
+            "symbol": "Parameter.process_value",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L2358-L2367",
+            "sha256_utf8_range": "00f32a812a22d8343316f0987659b4339b67ca01320c036bac8f89d0acac71f0"
+          },
+          {
+            "path": "tests/test_basic.py",
+            "start_line": 455,
+            "end_line": 495,
+            "role": "existing_tests",
+            "reason": "Corroborates eager-first callback ordering.",
+            "symbol": "test_evaluation_order",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_basic.py#L455-L495",
+            "sha256_utf8_range": "0d2c4eb22c5b06dec2cac06b830c7145b2d4964b5e5cdccaeae49f60b51cb54a"
+          }
+        ],
+        "expected_answer": [
+          "Defaults are is_flag=True, expose_value=False, is_eager=True.",
+          "False flag or resilient parsing makes the callback return without side effects.",
+          "An active version flag prints then exits before ordinary required validation.",
+          "expose_value=False keeps the value out of command kwargs."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Connect early exit to processing before required validation.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Identify flag/eager/expose defaults.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Explain resilient and false-value guard.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "No version-specific runtime regression test was found in this checkout. The labeled test corroborates general eager ordering; source supplies version-specific causal evidence."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "command-forward",
+      "split": "dev",
+      "task": "Using Context.forward and Context.invoke to call a second command, locate how forward fills omitted keyword arguments from the current command and how invoke fills remaining defaults. For current count=7, compare forward(target), invoke(target, count=42), and invoke(target) when target has default count=1. Explain return propagation and locate tests.",
+      "terms": [
+        "forward",
+        "invoke",
+        "count",
+        "defaults"
+      ],
+      "paths": [],
+      "symbols": [
+        "Context.forward",
+        "Context.invoke"
+      ],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": false,
+      "entry": {
+        "mode": "known_public_entry",
+        "supplied_symbols": [
+          "Context.forward",
+          "Context.invoke"
+        ],
+        "supplied_paths": [],
+        "supplied_configuration_names": [],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/advanced.rst#L158-L185",
+          "basis": "Forward reuses current arguments; invoke accepts caller-supplied values.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand documented ways to call another command.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/advanced.rst#L158-L185",
+          "local_versioned_source": {
+            "path": "docs/advanced.rst",
+            "start_line": 158,
+            "end_line": 185
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "known_entry",
+        "interface_implementation_tests",
+        "keyword_ambiguity"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 737,
+          "end_line": 788
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 790,
+          "end_line": 807
+        },
+        {
+          "path": "tests/test_commands.py",
+          "start_line": 24,
+          "end_line": 41
+        },
+        {
+          "path": "tests/test_commands.py",
+          "start_line": 235,
+          "end_line": 252
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/core.py",
+            "start_line": 737,
+            "end_line": 788,
+            "role": "public_interface_and_implementation",
+            "reason": "Distinguishes commands from callbacks, casts missing defaults, tracks kwargs and propagates returns.",
+            "symbol": "Context.invoke",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L737-L788",
+            "sha256_utf8_range": "edb1bdf4dd2f8c19783a63ad8f63ba22141ce63cb688de050b95c7c214cc24a5"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 790,
+            "end_line": 807,
+            "role": "public_interface_and_implementation",
+            "reason": "Fills omitted kwargs from current params then delegates to invoke.",
+            "symbol": "Context.forward",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L790-L807",
+            "sha256_utf8_range": "06d1980792ac8340c2395c54c5390df9e05e92e2bb0c5fa4f35bf25f444c068a"
+          },
+          {
+            "path": "tests/test_commands.py",
+            "start_line": 24,
+            "end_line": 41,
+            "role": "existing_tests",
+            "reason": "Contrasts forwarded current count and explicit invoke count.",
+            "symbol": "test_other_command_forward",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_commands.py#L24-L41",
+            "sha256_utf8_range": "ec6a5138744d48caf2fdd5d661b93910295b3ba43313bbd602893a65ce1b0ff4"
+          },
+          {
+            "path": "tests/test_commands.py",
+            "start_line": 235,
+            "end_line": 252,
+            "role": "existing_tests",
+            "reason": "Checks default casting and returned values.",
+            "symbol": "test_other_command_invoke_with_defaults",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_commands.py#L235-L252",
+            "sha256_utf8_range": "778a3b1c13c9fa46daed2a058cc03cbc27c8fcdf62a4e9659db926a44644d224"
+          }
+        ],
+        "expected_answer": [
+          "The three calls deliver count=7, 42 and 1.",
+          "Explicit kwargs win over current values; missing exposed parameters use type-cast defaults.",
+          "invoke tracks kwargs in the child context and returns the callback result; forward returns invoke result.",
+          "forward requires a Command while invoke can call a raw callback."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Give 7, 42, 1.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Explain omitted-key merge and exposed-parameter defaults.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Explain return propagation and commands versus callbacks.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "These necessary ranges are model proposed, not independently human reviewed."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "unknown-option-wrapper",
+      "split": "dev",
+      "task": "A command wrapper handles its own -v flag and passes unknown options to another program using ignore_unknown_options=True and an unprocessed variadic argument. Locate how an unknown long option --foo=bar is retained, while the mixed short token -va handles v and forwards -a. Explain the configuration and parser behavior, with tests.",
+      "terms": [
+        "unknown",
+        "short",
+        "options",
+        "ignore_unknown_options"
+      ],
+      "paths": [],
+      "symbols": [],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": false,
+      "entry": {
+        "mode": "unknown_entry",
+        "supplied_symbols": [],
+        "supplied_paths": [],
+        "supplied_configuration_names": [
+          "ignore_unknown_options"
+        ],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/advanced.rst#L258-L335",
+          "basis": "Wrapper parsing preserves unknown options; mixed short flags can be partially consumed and reassembled.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand pass-through options when a wrapper handles some flags.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/advanced.rst#L258-L335",
+          "local_versioned_source": {
+            "path": "docs/advanced.rst",
+            "start_line": 258,
+            "end_line": 335
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "unknown_entry",
+        "interface_implementation_tests",
+        "keyword_ambiguity",
+        "parser_vs_command"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/parser.py",
+          "start_line": 269,
+          "end_line": 286
+        },
+        {
+          "path": "src/click/parser.py",
+          "start_line": 423,
+          "end_line": 461
+        },
+        {
+          "path": "src/click/parser.py",
+          "start_line": 501,
+          "end_line": 531
+        },
+        {
+          "path": "tests/test_commands.py",
+          "start_line": 440,
+          "end_line": 453
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/parser.py",
+            "start_line": 269,
+            "end_line": 286,
+            "role": "configuration_interface",
+            "reason": "Copies ignore/interspersed settings from the context.",
+            "symbol": "OptionParser.__init__",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/parser.py#L269-L286",
+            "sha256_utf8_range": "89d5c5756b730f5a84ab3169ce7cfd5ed9790ac01f4e1535df2fb742532f81cd"
+          },
+          {
+            "path": "src/click/parser.py",
+            "start_line": 423,
+            "end_line": 461,
+            "role": "short_option_implementation",
+            "reason": "Consumes known short flags then reconstructs unknown letters.",
+            "symbol": "OptionParser._match_short_opt",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/parser.py#L423-L461",
+            "sha256_utf8_range": "bb54d03d583aa6fa6de670a17f8ec2aeb8d25addf4eb09188db85377aa761251"
+          },
+          {
+            "path": "src/click/parser.py",
+            "start_line": 501,
+            "end_line": 531,
+            "role": "long_option_implementation",
+            "reason": "Preserves unknown long options intact.",
+            "symbol": "OptionParser._process_opts",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/parser.py#L501-L531",
+            "sha256_utf8_range": "4e959dc47a7c7ead05535c8c78405fed03db2ac71dd2b472dc38d82ae9ca05c4"
+          },
+          {
+            "path": "tests/test_commands.py",
+            "start_line": 440,
+            "end_line": 453,
+            "role": "interface_wiring_and_existing_tests",
+            "reason": "Uses context setting, unprocessed nargs=-1 and preserved leftovers.",
+            "symbol": "test_unprocessed_options",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_commands.py#L440-L453",
+            "sha256_utf8_range": "e8a1f66c7236c1cb8c4e20437dc373fda2f96bd390ebd999ba34ba5be097ce88"
+          }
+        ],
+        "expected_answer": [
+          "--foo=bar stays intact; unknown long-option value arity is not inferred.",
+          "-va consumes v and appends -a as a leftover.",
+          "ignore_unknown_options enables preservation and unprocessed nargs=-1 consumes leftovers; context extra args instead requires allow_extra_args."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Distinguish intact long options and partial short-option handling.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Explain preservation and leftover collection configuration.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Cite parser implementation and a regression example.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "These necessary ranges are model proposed, not independently human reviewed."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "atomic-output",
+      "split": "dev",
+      "task": "Writing replacement output with atomic=True, a command writes and flushes while another reader still sees the old target contents. Locate the file type, deferred writing, filesystem implementation and test. Explain when the target is replaced, why the temporary file uses the same directory, and which writing modes are rejected; distinguish standard output.",
+      "terms": [
+        "atomic",
+        "writing",
+        "temporary",
+        "flush"
+      ],
+      "paths": [],
+      "symbols": [],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": true,
+      "entry": {
+        "mode": "unknown_entry",
+        "supplied_symbols": [],
+        "supplied_paths": [],
+        "supplied_configuration_names": [
+          "atomic"
+        ],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/handling-files.rst#L78-L90",
+          "basis": "Atomic output writes a sibling temporary file and moves it over the destination on completion.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand deferred atomic output while readers use the original destination.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/handling-files.rst#L78-L90",
+          "local_versioned_source": {
+            "path": "docs/handling-files.rst",
+            "start_line": 78,
+            "end_line": 90
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "unknown_entry",
+        "synonym_entry",
+        "interface_implementation_tests",
+        "long_relevant_function"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/types.py",
+          "start_line": 695,
+          "end_line": 743
+        },
+        {
+          "path": "src/click/utils.py",
+          "start_line": 148,
+          "end_line": 176
+        },
+        {
+          "path": "src/click/_compat.py",
+          "start_line": 373,
+          "end_line": 451
+        },
+        {
+          "path": "src/click/_compat.py",
+          "start_line": 454,
+          "end_line": 479
+        },
+        {
+          "path": "tests/test_arguments.py",
+          "start_line": 138,
+          "end_line": 155
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/types.py",
+            "start_line": 695,
+            "end_line": 743,
+            "role": "public_type_and_cleanup_wiring",
+            "reason": "Resolves lazy writing and registers cleanup of LazyFile or open_stream output.",
+            "symbol": "File.convert",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/types.py#L695-L743",
+            "sha256_utf8_range": "4e031779cfd716d053ce22f6a3a8dd11a67c08175007b4ac581aa5132f81c63e"
+          },
+          {
+            "path": "src/click/utils.py",
+            "start_line": 148,
+            "end_line": 176,
+            "role": "deferred_writing_implementation",
+            "reason": "Opens lazily with atomic flag and closes the underlying file.",
+            "symbol": "LazyFile.open",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/utils.py#L148-L176",
+            "sha256_utf8_range": "d4e19960fbae0d68e36ebbf927bf1a46009601fcaeb11f21dca34f7a8278d448"
+          },
+          {
+            "path": "src/click/_compat.py",
+            "start_line": 373,
+            "end_line": 451,
+            "role": "filesystem_implementation",
+            "reason": "Handles standard streams, validates modes, allocates a sibling temporary file and wraps it.",
+            "symbol": "open_stream",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/_compat.py#L373-L451",
+            "sha256_utf8_range": "a96107ad9c4f58ac71479333a85300505cd9972a4b7382420285376d03705e98"
+          },
+          {
+            "path": "src/click/_compat.py",
+            "start_line": 454,
+            "end_line": 479,
+            "role": "replacement_implementation",
+            "reason": "Closing invokes os.replace; flushing does not publish the temporary file.",
+            "symbol": "_AtomicFile",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/_compat.py#L454-L479",
+            "sha256_utf8_range": "3a8f0bb01642628a09facf58ee63d3f924db18f8d744108c4f21be615c602215"
+          },
+          {
+            "path": "tests/test_arguments.py",
+            "start_line": 138,
+            "end_line": 155,
+            "role": "existing_tests",
+            "reason": "Reader observes OLD after flush and replacement content after cleanup.",
+            "symbol": "test_file_atomics",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_arguments.py#L138-L155",
+            "sha256_utf8_range": "9203d62aa3d5992b8dd461672a6f8960ff16c31461c6e8a06db3b76537311172"
+          }
+        ],
+        "expected_answer": [
+          "Writable File defaults to lazy opening unless standard-stream rules apply.",
+          "Writes and flush affect a same-directory temporary file.",
+          "Atomic close closes the underlying stream then calls os.replace; command cleanup triggers closing.",
+          "Append, exclusive creation and non-w atomic modes are rejected.",
+          "Filename - selects standard IO and ignores atomic."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Explain old visibility after flush and close plus os.replace publication.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Describe sibling temporary path and standard output distinction.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Name rejected append, exclusive and non-write modes.",
+            "points": 2
+          },
+          {
+            "id": "criterion-4",
+            "criterion": "Connect type, lazy opening, stream allocation and closing with a test.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "Do not infer cross-filesystem durability or transactional rollback. At this commit close ignores its delete argument and still replaces."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "environment-split",
+      "split": "holdout",
+      "task": "A repeated option reads multiple values from an environment variable. Locate why ordinary text splits on whitespace but paths split using the platform path separator, and how two-value repeated options group the string \"x 1 y 2\" into pairs. Explain which type controls splitting and locate interface, implementation and tests.",
+      "terms": [
+        "environment",
+        "multiple",
+        "split",
+        "paths"
+      ],
+      "paths": [],
+      "symbols": [],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": false,
+      "entry": {
+        "mode": "unknown_entry",
+        "supplied_symbols": [],
+        "supplied_paths": [],
+        "supplied_configuration_names": [],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/options.rst#L736-L771",
+          "basis": "Multi-value environment input delegates splitting to its type, with path-specific separators.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand environment strings for repeated and fixed-arity option values.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/options.rst#L736-L771",
+          "local_versioned_source": {
+            "path": "docs/options.rst",
+            "start_line": 736,
+            "end_line": 771
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "unknown_entry",
+        "synonym_entry",
+        "interface_implementation_tests",
+        "type_vs_option"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/types.py",
+          "start_line": 120,
+          "end_line": 128
+        },
+        {
+          "path": "src/click/types.py",
+          "start_line": 799,
+          "end_line": 804
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 2920,
+          "end_line": 2934
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 168,
+          "end_line": 201
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 372,
+          "end_line": 394
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/types.py",
+            "start_line": 120,
+            "end_line": 128,
+            "role": "type_interface_and_implementation",
+            "reason": "Uses type-specific delimiter; None means whitespace.",
+            "symbol": "ParamType.split_envvar_value",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/types.py#L120-L128",
+            "sha256_utf8_range": "92b68b74106a965410aa9c9f5c1d64805cc4109ff73235bcb5cfb1b4ab367783"
+          },
+          {
+            "path": "src/click/types.py",
+            "start_line": 799,
+            "end_line": 804,
+            "role": "path_type_configuration",
+            "reason": "Path delimiter is os.path.pathsep.",
+            "symbol": "Path",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/types.py#L799-L804",
+            "sha256_utf8_range": "98374bad0c32b2c3ab957af459b123d46355555e48a8d34376a3d506dac1e4a1"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 2920,
+            "end_line": 2934,
+            "role": "option_integration",
+            "reason": "Splits multi-depth values then batches repeated fixed-size values.",
+            "symbol": "Option.value_from_envvar",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L2920-L2934",
+            "sha256_utf8_range": "824da5d7ef6ed22ec70d95ba83c591d825f14cf46602fbfaa3c70d5f9a1509d0"
+          },
+          {
+            "path": "tests/test_options.py",
+            "start_line": 168,
+            "end_line": 201,
+            "role": "existing_tests",
+            "reason": "Contrasts repeated text and paths.",
+            "symbol": "test_multiple_envvar",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L168-L201",
+            "sha256_utf8_range": "b3d8921ae510e94527ff738370d4246f0e8db73e3adcbff50c47cea68e10c497"
+          },
+          {
+            "path": "tests/test_options.py",
+            "start_line": 372,
+            "end_line": 394,
+            "role": "existing_tests",
+            "reason": "Checks two-value and repeated pair splitting.",
+            "symbol": "test_nargs_envvar",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L372-L394",
+            "sha256_utf8_range": "237ab8bc87f9761217f42872dd88086f27f561bac0d893bd0dc7c292f7cf2aee"
+          }
+        ],
+        "expected_answer": [
+          "The type splits using None for whitespace or os.path.pathsep for Path.",
+          "nargs != 1 or multiple activates splitting.",
+          "multiple=True and nargs=2 batches tokens into (x,1) and (y,2) before value casting."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Identify type-controlled delimiter distinction.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Explain splitting gate and two-pair grouping.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Cite type, option and both relevant test cases.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "These necessary ranges are model proposed, not independently human reviewed."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "parameter-precedence",
+      "split": "holdout",
+      "task": "An option has a declaration default, a configuration default, an environment value and a command-line value. Locate which source wins and how the command can report the source even when the supplied value equals a default. Explain the fallback order with no prompt configured and locate implementation, public reporting interface and tests.",
+      "terms": [
+        "environment",
+        "default",
+        "source",
+        "command-line"
+      ],
+      "paths": [],
+      "symbols": [],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": false,
+      "entry": {
+        "mode": "unknown_entry",
+        "supplied_symbols": [],
+        "supplied_paths": [],
+        "supplied_configuration_names": [],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/advanced.rst#L388-L413",
+          "basis": "A command can inspect parameter origin independently of its value.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand where a parameter came from.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/advanced.rst#L388-L413",
+          "local_versioned_source": {
+            "path": "docs/advanced.rst",
+            "start_line": 388,
+            "end_line": 413
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        },
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/commands.rst#L433-L438",
+          "basis": "Configuration default maps can override declaration defaults.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand configuration-provided defaults.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/commands.rst#L433-L438",
+          "local_versioned_source": {
+            "path": "docs/commands.rst",
+            "start_line": 433,
+            "end_line": 438
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "unknown_entry",
+        "synonym_entry",
+        "keyword_ambiguity",
+        "interface_implementation_tests"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 2278,
+          "end_line": 2296
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 2395,
+          "end_line": 2413
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 818,
+          "end_line": 834
+        },
+        {
+          "path": "tests/test_context.py",
+          "start_line": 323,
+          "end_line": 367
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/core.py",
+            "start_line": 2278,
+            "end_line": 2296,
+            "role": "precedence_implementation",
+            "reason": "Tries CLI, environment, map then declaration default.",
+            "symbol": "Parameter.consume_value",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L2278-L2296",
+            "sha256_utf8_range": "7ce857b095b0bb0cbd82ee9f33a2350bcc881f81dc6aa5a5b4ac72d1d87c7f2c"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 2395,
+            "end_line": 2413,
+            "role": "recording_integration",
+            "reason": "Records source before processing and exposing value.",
+            "symbol": "Parameter.handle_parse_result",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L2395-L2413",
+            "sha256_utf8_range": "0d8699be62f746cf7174111f084a37271adbb4742a9fdaeb2b963d17199d7144"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 818,
+            "end_line": 834,
+            "role": "public_reporting_interface",
+            "reason": "Returns recorded origin rather than testing value equality.",
+            "symbol": "Context.get_parameter_source",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L818-L834",
+            "sha256_utf8_range": "c934c2d229a57ccce8b756ebd9fe084d5dec2b46806dd530ce4eb0c7d4adb9f8"
+          },
+          {
+            "path": "tests/test_context.py",
+            "start_line": 323,
+            "end_line": 367,
+            "role": "existing_tests",
+            "reason": "Equal-valued input 1 is reported from distinct sources.",
+            "symbol": "test_parameter_source",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_context.py#L323-L367",
+            "sha256_utf8_range": "77b37ba16ff0f920895486d58c27b8cebc1afd884173fda9533f03c9a8b2f0ed"
+          }
+        ],
+        "expected_answer": [
+          "CLI wins, then environment, then default_map, then declaration default.",
+          "Only None triggers the next fallback, not every falsy value.",
+          "Consumption reports origin; parsing records it and the public getter retrieves it.",
+          "Supplying 1 can be COMMANDLINE or ENVIRONMENT even if the default is also 1."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Give four-source precedence.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Explain None fallback and recorded origin.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Explain equal-valued inputs retaining distinct provenance with tests.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "These necessary ranges are model proposed, not independently human reviewed."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "cleanup-order",
+      "split": "holdout",
+      "task": "A group opens resources for its subcommands and registers cleanup callbacks. Locate how context managers and plain cleanup functions stay usable until the command context is finished. Explain why nested entry does not close resources early and whether the current context is still available inside cleanup; identify existing tests.",
+      "terms": [
+        "resources",
+        "cleanup",
+        "context",
+        "close"
+      ],
+      "paths": [],
+      "symbols": [],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": false,
+      "entry": {
+        "mode": "unknown_entry",
+        "supplied_symbols": [],
+        "supplied_paths": [],
+        "supplied_configuration_names": [],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/advanced.rst#L417-L475",
+          "basis": "Group resources can be registered with context-owned cleanup.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand resources available to subcommands until context completion.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/advanced.rst#L417-L475",
+          "local_versioned_source": {
+            "path": "docs/advanced.rst",
+            "start_line": 417,
+            "end_line": 475
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "unknown_entry",
+        "synonym_entry",
+        "interface_implementation_tests",
+        "lifecycle"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 461,
+          "end_line": 476
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 558,
+          "end_line": 606
+        },
+        {
+          "path": "tests/test_context.py",
+          "start_line": 103,
+          "end_line": 120
+        },
+        {
+          "path": "tests/test_context.py",
+          "start_line": 219,
+          "end_line": 253
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/core.py",
+            "start_line": 461,
+            "end_line": 476,
+            "role": "context_exit_implementation",
+            "reason": "Depth defers closing and close happens before popping current context.",
+            "symbol": "Context.__exit__",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L461-L476",
+            "sha256_utf8_range": "06ef20e8596c78738cb42ccb16d16557b07c8cd11a11ccf7639d6de1cbe32a79"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 558,
+            "end_line": 606,
+            "role": "public_interface_and_cleanup_implementation",
+            "reason": "Registers managers and callbacks in ExitStack then closes it.",
+            "symbol": "Context.with_resource",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L558-L606",
+            "sha256_utf8_range": "8c02d6130bca7bc009c664d0a72621c2daf135ffa77ddaaa37cf1267ae7d1f38"
+          },
+          {
+            "path": "tests/test_context.py",
+            "start_line": 103,
+            "end_line": 120,
+            "role": "existing_tests",
+            "reason": "Nested entry does not close resources early.",
+            "symbol": "test_multi_enter",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_context.py#L103-L120",
+            "sha256_utf8_range": "d4aba47fca965479a7b76242326566fcd89aaa088f2bc65c5c22f43b9d8167a4"
+          },
+          {
+            "path": "tests/test_context.py",
+            "start_line": 219,
+            "end_line": 253,
+            "role": "existing_tests",
+            "reason": "Cleanup sees the active context; registered manager closes after scope.",
+            "symbol": "test_close_before_pop",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_context.py#L219-L253",
+            "sha256_utf8_range": "338b414f062894dedb75c3544e7282995b67451e4c837a1c0a49516e841711b2"
+          }
+        ],
+        "expected_answer": [
+          "with_resource enters a manager and returns its resource; call_on_close registers a function.",
+          "Both use ExitStack; close exits managers and calls functions.",
+          "Depth ensures only final exit closes.",
+          "Close before pop leaves current context visible to cleanup."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Explain both registration APIs.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Explain nesting and depth.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Give close-before-pop ordering with tests.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "This task concerns ordinary context teardown in 8.1.8, not later exit-triggered cleanup changes."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "resilient-help",
+      "split": "holdout",
+      "task": "A custom help flag generated through help_option_names must retain eager callback order. Explain why --my-help beats an ordinary -a regardless of argument order, while two eager flags --my-help and -b follow CLI order. Locate why repeatedly creating the help flag used to break this and how the release fix preserves identity; identify the regression test.",
+      "terms": [
+        "help",
+        "eager",
+        "help_option_names",
+        "order"
+      ],
+      "paths": [],
+      "symbols": [],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": true,
+      "entry": {
+        "mode": "unknown_entry",
+        "supplied_symbols": [],
+        "supplied_paths": [],
+        "supplied_configuration_names": [
+          "help_option_names"
+        ],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "real_maintenance_pr_retrospective",
+          "url": "https://github.com/pallets/click/pull/2811",
+          "basis": "PR #2811 reports regenerated help-option objects losing positional identity; the release caches them.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Preserve eagerness for help flags generated by help_option_names.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/CHANGES.rst#L21-L22",
+          "local_versioned_source": {
+            "path": "CHANGES.rst",
+            "start_line": 21,
+            "end_line": 22
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "unknown_entry",
+        "interface_implementation_tests",
+        "keyword_ambiguity",
+        "regression_understanding"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 116,
+          "end_line": 140
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 1296,
+          "end_line": 1319
+        },
+        {
+          "path": "src/click/decorators.py",
+          "start_line": 525,
+          "end_line": 542
+        },
+        {
+          "path": "tests/test_commands.py",
+          "start_line": 371,
+          "end_line": 437
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/core.py",
+            "start_line": 116,
+            "end_line": 140,
+            "role": "ordering_implementation",
+            "reason": "Sorts eagerness and object occurrence index.",
+            "symbol": "iter_params_for_processing",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L116-L140",
+            "sha256_utf8_range": "152d73aca9ad2784c60aee96b01ff3610ab6d1ad0d303a68d30b3453e44cf3c6"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 1296,
+            "end_line": 1319,
+            "role": "release_fix_implementation",
+            "reason": "Caches generated help option for identity-preserving order comparison.",
+            "symbol": "Command.get_help_option",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L1296-L1319",
+            "sha256_utf8_range": "9f4615bf7607083eba7dc0426bc18bb16ff472d3c43f39aa15ed87ea38066aa2"
+          },
+          {
+            "path": "src/click/decorators.py",
+            "start_line": 525,
+            "end_line": 542,
+            "role": "help_flag_interface",
+            "reason": "Defaults generated help to eager and unexposed.",
+            "symbol": "HelpOption",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/decorators.py#L525-L542",
+            "sha256_utf8_range": "d110c5e9e0504620fcc849cf7e3136cd20e3541cb062c725265fa1894843e0fb"
+          },
+          {
+            "path": "tests/test_commands.py",
+            "start_line": 371,
+            "end_line": 437,
+            "role": "existing_regression_test",
+            "reason": "Covers normal/eager precedence and formerly broken help-before-b case.",
+            "symbol": "test_help_param_priority",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_commands.py#L371-L437",
+            "sha256_utf8_range": "2fba671f326868337089e9e142dc6f2e9b014e4d3143d3f5a024e36c2af8e8f1"
+          }
+        ],
+        "expected_answer": [
+          "Sort key is (not is_eager, invocation_order.index(option)); absence gives infinity.",
+          "Eager help beats ordinary -a in either order.",
+          "Among help and -b, both eager, CLI order wins.",
+          "Regenerated objects do not match the previously parsed option, losing invocation position.",
+          "get_help_option caches HelpOption in _help_option and reuses that object."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Explain eagerness tiers and CLI order among eager flags.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Explain identity loss and infinity fallback.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Identify cached object reuse.",
+            "points": 2
+          },
+          {
+            "id": "criterion-4",
+            "criterion": "Cite --my-help then -b regression and expected help output.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "The fixed ID is historical; the task concerns custom-help eagerness and identity, not resilient parsing.",
+          "Source/gold contain implementation names but do not enter scorer or reader input."
+        ],
+        "distractors": []
+      }
+    },
+    {
+      "id": "chain-result",
+      "split": "holdout",
+      "task": "A chain-enabled group builds a pipeline from return values of subcommands and passes them to a result callback with the group parameters. Locate the registration and invocation code. Explain return-value order, what the callback receives with no subcommand when invoke_without_command is enabled, and how this differs from a non-chain group; cite tests.",
+      "terms": [
+        "chain",
+        "pipeline",
+        "return",
+        "callback"
+      ],
+      "paths": [],
+      "symbols": [],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": true,
+      "entry": {
+        "mode": "unknown_entry",
+        "supplied_symbols": [],
+        "supplied_paths": [],
+        "supplied_configuration_names": [],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/commands.rst#L335-L410",
+          "basis": "A chained pipeline gathers subcommand returns for the group result callback.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand processors returned by chained subcommands.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/commands.rst#L335-L410",
+          "local_versioned_source": {
+            "path": "docs/commands.rst",
+            "start_line": 335,
+            "end_line": 410
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        },
+        {
+          "kind": "documentation_derived_understanding",
+          "url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/commands.rst#L549-L558",
+          "basis": "Chain mode supplies a return list; regular groups supply a single return.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Understand group return-value contracts.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/docs/commands.rst#L549-L558",
+          "local_versioned_source": {
+            "path": "docs/commands.rst",
+            "start_line": 549,
+            "end_line": 558
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "unknown_entry",
+        "synonym_entry",
+        "interface_implementation_tests",
+        "long_relevant_vs_short_irrelevant"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 1575,
+          "end_line": 1618
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 1663,
+          "end_line": 1729
+        },
+        {
+          "path": "tests/test_chain.py",
+          "start_line": 88,
+          "end_line": 104
+        },
+        {
+          "path": "tests/test_chain.py",
+          "start_line": 127,
+          "end_line": 167
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/core.py",
+            "start_line": 1575,
+            "end_line": 1618,
+            "role": "registration_interface",
+            "reason": "Registers result callback, composing an old callback unless replace=True.",
+            "symbol": "MultiCommand.result_callback",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L1575-L1618",
+            "sha256_utf8_range": "236e82b6658c5c77a5609b74e794cf2cd0937e45d80e5566b4b84da229f9f962"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 1663,
+            "end_line": 1729,
+            "role": "dispatch_implementation",
+            "reason": "Collects ordered returns, adds group kwargs and handles empty invocation.",
+            "symbol": "MultiCommand.invoke",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L1663-L1729",
+            "sha256_utf8_range": "80dd66f3ad5461493bfeef460e89667c20f655bf184addb0c8d7f2d1529a01c8"
+          },
+          {
+            "path": "tests/test_chain.py",
+            "start_line": 88,
+            "end_line": 104,
+            "role": "existing_tests",
+            "reason": "Compares empty regular return 1 against chained [].",
+            "symbol": "test_no_command_result_callback",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_chain.py#L88-L104",
+            "sha256_utf8_range": "c482cf5cf3fd9bb4d812c88530e189d60e0951b2992283e551d131c9e1b17a5c"
+          },
+          {
+            "path": "tests/test_chain.py",
+            "start_line": 127,
+            "end_line": 167,
+            "role": "existing_pipeline_tests",
+            "reason": "Exercises processor order and a group file parameter.",
+            "symbol": "test_pipeline",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_chain.py#L127-L167",
+            "sha256_utf8_range": "10dc60bf0a1663c0ccfde5feff85c11dc605450d79ca50f68d0f113b853c5e06"
+          }
+        ],
+        "expected_answer": [
+          "Chain mode appends subcommand returns in parsed order.",
+          "Result callback receives list first and group **ctx.params.",
+          "Empty chained invoke_without_command gives [] despite a group return of 1.",
+          "Empty regular invoke_without_command gives group return 1; an invoked regular subcommand provides its single return.",
+          "Registration composes callbacks unless replace=True."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Give ordered return list plus group kwargs.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Give [] versus 1 for the empty-group example.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Explain callback registration and replace.",
+            "points": 2
+          },
+          {
+            "id": "criterion-4",
+            "criterion": "Cite dispatch and empty/pipeline tests.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "These necessary ranges are model proposed, not independently human reviewed."
+        ],
+        "distractors": [
+          {
+            "path": "tests/test_commands.py",
+            "start_line": 8,
+            "end_line": 21,
+            "reason": "Short direct invocation test cannot establish chained result-list or empty-group behavior."
+          }
+        ]
+      }
+    },
+    {
+      "id": "default-help-empty",
+      "split": "holdout",
+      "task": "An option has default=\"\" and show_default=True, but historically its empty default disappeared from help. Locate the release behavior that displays an empty string default and distinguish it from no default and an empty multiple-value default. Explain the rendering condition and formatting rather than only finding the regression assertion.",
+      "terms": [
+        "default",
+        "empty",
+        "show_default",
+        "help"
+      ],
+      "paths": [],
+      "symbols": [],
+      "repository_commit": "934813e4d421071a1b3db3973c02fe2721359a6e",
+      "reader_experiment": false,
+      "entry": {
+        "mode": "unknown_entry",
+        "supplied_symbols": [],
+        "supplied_paths": [],
+        "supplied_configuration_names": [
+          "show_default"
+        ],
+        "basis": "Only public entry names explicitly supplied in the request are hints. Gold implementation symbols are excluded."
+      },
+      "query_provenance": {
+        "method": "literal_request_terms",
+        "frozen_before_candidate_generation": true,
+        "gold_symbols_added": false
+      },
+      "sources": [
+        {
+          "kind": "real_issue_retrospective",
+          "url": "https://github.com/pallets/click/issues/2500",
+          "basis": "Issue #2500 reports missing empty-string defaults; release 8.1.8 corrects that behavior.",
+          "basis_form": "paraphrase",
+          "original_requirement": "Display the configured empty string default in help.",
+          "versioned_source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/CHANGES.rst#L11-L12",
+          "local_versioned_source": {
+            "path": "CHANGES.rst",
+            "start_line": 11,
+            "end_line": 12
+          },
+          "verification": "Direct read from clean fixed-release checkout; webpage verification is described in real-task-sources.md."
+        }
+      ],
+      "scenario_tags": [
+        "unknown_entry",
+        "keyword_ambiguity",
+        "interface_implementation_tests",
+        "long_relevant_vs_short_irrelevant"
+      ],
+      "key_ranges": [
+        {
+          "path": "src/click/core.py",
+          "start_line": 2785,
+          "end_line": 2828
+        },
+        {
+          "path": "src/click/core.py",
+          "start_line": 2843,
+          "end_line": 2847
+        },
+        {
+          "path": "tests/test_options.py",
+          "start_line": 789,
+          "end_line": 812
+        }
+      ],
+      "gold": {
+        "annotation_status": "provisional_model_annotation",
+        "human_reviewed": false,
+        "necessary_context": [
+          {
+            "path": "src/click/core.py",
+            "start_line": 2785,
+            "end_line": 2828,
+            "role": "formatting_implementation",
+            "reason": "Uses is-not-None and quotes empty string, contrasting absent and empty sequence defaults.",
+            "symbol": "Option.get_help_record",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L2785-L2828",
+            "sha256_utf8_range": "150dfe1ab0298758552974e608d81a45c6ccb71143f88e16e62fe4db9c2f4e53"
+          },
+          {
+            "path": "src/click/core.py",
+            "start_line": 2843,
+            "end_line": 2847,
+            "role": "rendering_integration",
+            "reason": "Inserts collected annotations into final help text.",
+            "symbol": "Option.get_help_record",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/src/click/core.py#L2843-L2847",
+            "sha256_utf8_range": "78ce4a192690f132bef703967c96d2ea7a65d91be844c79fe6fe6d4b866cbb2a"
+          },
+          {
+            "path": "tests/test_options.py",
+            "start_line": 789,
+            "end_line": 812,
+            "role": "public_interface_and_existing_regressions",
+            "reason": "Configures Option and contrasts empty string, absent and empty multiple defaults.",
+            "symbol": "test_show_default_with_empty_string",
+            "basis": "fixed_release_interface_implementation_and_existing_test_inspection",
+            "source_url": "https://github.com/pallets/click/blob/934813e4d421071a1b3db3973c02fe2721359a6e/tests/test_options.py#L789-L812",
+            "sha256_utf8_range": "9b0cb2c56d05f83fead8f9bb70381384f1d0880c8c3299914016a3b584e89104"
+          }
+        ],
+        "expected_answer": [
+          "Explicit empty string displays [default: \"\"].",
+          "is-not-None lets empty string reach formatting, where it becomes quoted nonempty text.",
+          "None bypasses formatting; an empty list/tuple joins to empty text and adds no annotation.",
+          "Collected annotations are inserted in the returned help record."
+        ],
+        "acceptance": [
+          {
+            "id": "criterion-1",
+            "criterion": "Give exact empty-string output and is-not-None condition.",
+            "points": 2
+          },
+          {
+            "id": "criterion-2",
+            "criterion": "Distinguish None and empty multiple values.",
+            "points": 2
+          },
+          {
+            "id": "criterion-3",
+            "criterion": "Explain quoted representation and final rendering with source plus tests.",
+            "points": 2
+          }
+        ],
+        "annotation_limitations": [
+          "Key labels cover necessary branches. The AST reading unit is the full 109-line formatter and keeps its full reading cost.",
+          "Original issue reproduced 8.0.3; this asks how the fixed 8.1.8 release behaves."
+        ],
+        "distractors": [
+          {
+            "path": "tests/test_options.py",
+            "start_line": 781,
+            "end_line": 786,
+            "reason": "Six-line custom default-description test shares terms but does not establish empty actual-default behavior."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,319 @@
+{
+  "schema_version": 1,
+  "repo": "tests/fixtures/shop",
+  "read_budget": 800,
+  "first_round_fraction": 0.8,
+  "variants": {
+    "A": "rg + bounded text windows + local ranking",
+    "B": "rg + Python AST/one-hop expansion + local ranking",
+    "C": "rg + Python AST/one-hop expansion + Jev relevance"
+  },
+  "jev_mode": "offline_fixed_responses_mock",
+  "coverage_definition": "complete_fraction = all lines of a labeled range covered; line_fraction = unioned covered lines / labeled lines; neither proves semantic sufficiency",
+  "supplemental_read_cost": "not_measured",
+  "token_basis": "pipeline estimates; no whole-repository-size baseline",
+  "tasks": [
+    {
+      "id": "invoice-rounding",
+      "variants": {
+        "A": {
+          "candidate_count": 2,
+          "candidate_recall": {
+            "complete_ranges": 2,
+            "total_ranges": 3,
+            "complete_fraction": 0.6666666666666666,
+            "covered_lines": 9,
+            "key_lines": 13,
+            "line_fraction": 0.6923076923076923
+          },
+          "budget_key_coverage": {
+            "complete_ranges": 2,
+            "total_ranges": 3,
+            "complete_fraction": 0.6666666666666666,
+            "covered_lines": 9,
+            "key_lines": 13,
+            "line_fraction": 0.6923076923076923
+          },
+          "reading_tokens": 169,
+          "list_tokens": 228,
+          "latency_seconds": 0.030132,
+          "jev_calls": 0,
+          "jev_input_tokens": 0,
+          "jev_cost_basis": "pipeline_measurement",
+          "status": "local_only",
+          "diagnostics": [],
+          "jev_integration": "not_used"
+        },
+        "B": {
+          "candidate_count": 4,
+          "candidate_recall": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 13,
+            "key_lines": 13,
+            "line_fraction": 1.0
+          },
+          "budget_key_coverage": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 13,
+            "key_lines": 13,
+            "line_fraction": 1.0
+          },
+          "reading_tokens": 241,
+          "list_tokens": 296,
+          "latency_seconds": 0.061079,
+          "jev_calls": 0,
+          "jev_input_tokens": 0,
+          "jev_cost_basis": "pipeline_measurement",
+          "status": "local_only",
+          "diagnostics": [],
+          "jev_integration": "not_used"
+        },
+        "C": {
+          "candidate_count": 4,
+          "candidate_recall": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 13,
+            "key_lines": 13,
+            "line_fraction": 1.0
+          },
+          "budget_key_coverage": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 13,
+            "key_lines": 13,
+            "line_fraction": 1.0
+          },
+          "reading_tokens": 241,
+          "list_tokens": 293,
+          "latency_seconds": 0.0612,
+          "jev_calls": 0,
+          "jev_input_tokens": 0,
+          "jev_cost_basis": "offline_mock_no_external_cost",
+          "status": "offline_mock",
+          "diagnostics": [],
+          "jev_integration": "mock_not_external",
+          "offline_scored_candidates": 4
+        }
+      }
+    },
+    {
+      "id": "auth-expiration",
+      "variants": {
+        "A": {
+          "candidate_count": 2,
+          "candidate_recall": {
+            "complete_ranges": 2,
+            "total_ranges": 3,
+            "complete_fraction": 0.6666666666666666,
+            "covered_lines": 13,
+            "key_lines": 24,
+            "line_fraction": 0.5416666666666666
+          },
+          "budget_key_coverage": {
+            "complete_ranges": 2,
+            "total_ranges": 3,
+            "complete_fraction": 0.6666666666666666,
+            "covered_lines": 13,
+            "key_lines": 24,
+            "line_fraction": 0.5416666666666666
+          },
+          "reading_tokens": 203,
+          "list_tokens": 230,
+          "latency_seconds": 0.036838,
+          "jev_calls": 0,
+          "jev_input_tokens": 0,
+          "jev_cost_basis": "pipeline_measurement",
+          "status": "local_only",
+          "diagnostics": [],
+          "jev_integration": "not_used"
+        },
+        "B": {
+          "candidate_count": 4,
+          "candidate_recall": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 24,
+            "key_lines": 24,
+            "line_fraction": 1.0
+          },
+          "budget_key_coverage": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 24,
+            "key_lines": 24,
+            "line_fraction": 1.0
+          },
+          "reading_tokens": 282,
+          "list_tokens": 297,
+          "latency_seconds": 0.058275,
+          "jev_calls": 0,
+          "jev_input_tokens": 0,
+          "jev_cost_basis": "pipeline_measurement",
+          "status": "local_only",
+          "diagnostics": [],
+          "jev_integration": "not_used"
+        },
+        "C": {
+          "candidate_count": 4,
+          "candidate_recall": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 24,
+            "key_lines": 24,
+            "line_fraction": 1.0
+          },
+          "budget_key_coverage": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 24,
+            "key_lines": 24,
+            "line_fraction": 1.0
+          },
+          "reading_tokens": 282,
+          "list_tokens": 294,
+          "latency_seconds": 0.060927,
+          "jev_calls": 0,
+          "jev_input_tokens": 0,
+          "jev_cost_basis": "offline_mock_no_external_cost",
+          "status": "offline_mock",
+          "diagnostics": [],
+          "jev_integration": "mock_not_external",
+          "offline_scored_candidates": 4
+        }
+      }
+    },
+    {
+      "id": "retry-exhaustion",
+      "variants": {
+        "A": {
+          "candidate_count": 4,
+          "candidate_recall": {
+            "complete_ranges": 2,
+            "total_ranges": 3,
+            "complete_fraction": 0.6666666666666666,
+            "covered_lines": 19,
+            "key_lines": 27,
+            "line_fraction": 0.7037037037037037
+          },
+          "budget_key_coverage": {
+            "complete_ranges": 2,
+            "total_ranges": 3,
+            "complete_fraction": 0.6666666666666666,
+            "covered_lines": 19,
+            "key_lines": 27,
+            "line_fraction": 0.7037037037037037
+          },
+          "reading_tokens": 203,
+          "list_tokens": 222,
+          "latency_seconds": 0.036782,
+          "jev_calls": 0,
+          "jev_input_tokens": 0,
+          "jev_cost_basis": "pipeline_measurement",
+          "status": "local_only",
+          "diagnostics": [],
+          "jev_integration": "not_used"
+        },
+        "B": {
+          "candidate_count": 4,
+          "candidate_recall": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 27,
+            "key_lines": 27,
+            "line_fraction": 1.0
+          },
+          "budget_key_coverage": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 27,
+            "key_lines": 27,
+            "line_fraction": 1.0
+          },
+          "reading_tokens": 283,
+          "list_tokens": 287,
+          "latency_seconds": 0.061558,
+          "jev_calls": 0,
+          "jev_input_tokens": 0,
+          "jev_cost_basis": "pipeline_measurement",
+          "status": "local_only",
+          "diagnostics": [],
+          "jev_integration": "not_used"
+        },
+        "C": {
+          "candidate_count": 4,
+          "candidate_recall": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 27,
+            "key_lines": 27,
+            "line_fraction": 1.0
+          },
+          "budget_key_coverage": {
+            "complete_ranges": 3,
+            "total_ranges": 3,
+            "complete_fraction": 1.0,
+            "covered_lines": 27,
+            "key_lines": 27,
+            "line_fraction": 1.0
+          },
+          "reading_tokens": 283,
+          "list_tokens": 284,
+          "latency_seconds": 0.062229,
+          "jev_calls": 0,
+          "jev_input_tokens": 0,
+          "jev_cost_basis": "offline_mock_no_external_cost",
+          "status": "offline_mock",
+          "diagnostics": [],
+          "jev_integration": "mock_not_external",
+          "offline_scored_candidates": 4
+        }
+      }
+    }
+  ],
+  "summary": {
+    "A": {
+      "mean_candidate_complete_fraction": 0.6666666666666666,
+      "mean_budget_complete_fraction": 0.6666666666666666,
+      "mean_budget_line_fraction": 0.6458926875593543,
+      "total_reading_tokens": 575,
+      "total_list_tokens": 680,
+      "total_latency_seconds": 0.103752,
+      "total_jev_calls": 0,
+      "total_jev_input_tokens": 0
+    },
+    "B": {
+      "mean_candidate_complete_fraction": 1.0,
+      "mean_budget_complete_fraction": 1.0,
+      "mean_budget_line_fraction": 1.0,
+      "total_reading_tokens": 806,
+      "total_list_tokens": 880,
+      "total_latency_seconds": 0.180912,
+      "total_jev_calls": 0,
+      "total_jev_input_tokens": 0
+    },
+    "C": {
+      "mean_candidate_complete_fraction": 1.0,
+      "mean_budget_complete_fraction": 1.0,
+      "mean_budget_line_fraction": 1.0,
+      "total_reading_tokens": 806,
+      "total_list_tokens": 871,
+      "total_latency_seconds": 0.184356,
+      "total_jev_calls": 0,
+      "total_jev_input_tokens": 0
+    }
+  }
+}

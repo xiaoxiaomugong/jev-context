@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "frozen_before_real_scoring": true,
+  "tasks": ["choice-case", "atomic-output", "resilient-help", "chain-result"],
+  "selection_basis": "Two development and two holdout source-grounded understanding tasks with finite acceptance criteria; chosen before C ranking results.",
+  "read_budget": 1024,
+  "methods": ["B", "C"],
+  "model_settings": "Both methods use clean-context collaboration agents inheriting the same parent model and reasoning effort; exact server usage is unavailable.",
+  "reader_protocol": "Receive only original task, method advice and common instructions. Read all recommended ranges first through the logged helper. Supplemental safe file reads and searches are allowed. Do not inspect manifest, snapshots, gold, another reader's answer or evaluation implementation. Stop when answer and cited implementation/test evidence cover the task. Maximum 16 read/search helper invocations, at most 250 lines per supplemental read. Do not modify or execute target repository code.",
+  "token_counter": "utf8_bytes_div_3_estimate",
+  "cost_scope": "Delivered advice, line-numbered file-read output, search output including failures, supplemental output and exact repeats; code union cost separately. Common experiment instructions/task separately. Hidden harness/system text and token-level server usage unavailable.",
+  "grading": "Provisional model grading against frozen acceptance criteria; human review pending. A reader cannot see gold. Correctness, evidence sufficiency and missing constraints are separate axes.",
+  "limits": "Small docs-derived sample, one run per task/method, no claim of general model performance. Offline gold prefix references are not reader stopping measurements."
+}

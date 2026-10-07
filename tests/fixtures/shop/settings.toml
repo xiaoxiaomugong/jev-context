@@ -1,0 +1,5 @@
+[worker]
+max_attempts = 3
+
+[billing]
+currency = "USD"
