@@ -334,7 +334,7 @@ class EvaluationTests(unittest.TestCase):
         from jev_context.tokens import TokenCounter
         with tempfile.TemporaryDirectory() as directory:
             repo = Path(directory)
-            for part in range(3):
+            for part in range(6):
                 (repo / f"part{part}.py").write_text("\n".join(
                     f"def invoice_{part}_{item}():\n    return {item}\n" for item in range(10)))
             tasks = [{"id": "many", "task": "Locate invoice entries", "terms": ["invoice"],
@@ -342,7 +342,7 @@ class EvaluationTests(unittest.TestCase):
             report = evaluate.evaluate(repo, tasks, read_budget=8000,
                 offline_responses=ROOT / "tests" / "fixtures" / "jev-responses.json")
             variant = report["tasks"][0]["variants"]["B"]
-            self.assertEqual(len(variant["reading_list"]), 30)
+            self.assertEqual(len(variant["reading_list"]), 60)
             self.assertGreater(variant["list_tokens"], 1000)
             self.assertEqual(variant["list_tokens"], TokenCounter(use_tokenizer=False).count(render(variant["public_report"])))
 

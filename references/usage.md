@@ -1,53 +1,67 @@
-# 运行与验证
+# 使用、边界与验证
 
-公开发布说明：原始实验输出、评分/代码快照和读者日志保留在作者本地，未随公开仓库发布；相关路径仅说明历史证据来源。公开范围见 [实验记录说明](runs/README.md)。
+当前源码0.3.2；必需 Python3.12+、rg、POSIX directory-fd/O_NOFOLLOW安全接口。核心标准库；Jev和tiktoken均可选，默认不启动。实测与验收状态见 [公开验证摘要](validation-0.3.2.md)。
 
-此目录本身就是可运行的 skill；不自动注册、不修改全局 skills。标准库实现，外部必需 `rg`。Jev 可选，原有 CLI 负责鉴权/provider；CLI 缺失、凭证缺失、鉴权失败、批量部分错误或超时会留下本地阅读清单。`--local-only` 不启动 Jev。
+## 参数
 
-```bash
-python3 scripts/jev-context.py --help
-python3 scripts/jev-context.py --repo tests/fixtures/shop \
-  --task '修复发票金额舍入' --term invoice --term rounding --local-only
-python3 scripts/jev-context.py --repo tests/fixtures/shop \
-  --task '修复过期令牌处理' --term 'expired token' --path auth/entry.py --format json
-python3 -m unittest discover -s tests -v
-python3 scripts/evaluate.py --offline-responses tests/fixtures/jev-responses.json
-python3 scripts/evaluate.py
-```
+入口 scripts/jev-context.py；--check 不需要repo/task，不读源码或凭证。低版本Python、缺rg或其他degraded检索退出2；正常零命中退出0、状态no_hits/empty。
 
-任务可用 `--task-file task.txt` 代替 `--task`；词是 `rg -F` 字面量，可重复提供。`--path` 为仓库相对路径，`--symbol` 为 Python 名称。显式定位的候选优先保留；非常多的指名入口也可能在候选或阅读预算内放不下，诊断和 deferred 会提示。直接读很小的已知文件通常更省成本。
+| 参数 | 默认 / 含义 |
+|---|---|
+| --repo | 目标仓库，必需，只读 |
+| --task / --task-file | 二选一，非空UTF-8，最多64KiB |
+| --term | 可重复单行字面量，rg -F；未给时从需求提词，不自动翻译 |
+| --path / --symbol | 可重复；明确入口优先，预算内放不下仍deferred |
+| --mode local / jev | local；--local-only兼容别名 |
+| --read-budget | 1200：80%首轮推荐源码并集，20%补读预留；补读不被封锁 |
+| --list-budget | 600，实际序列化输出；最少256，JSON通常需更多 |
+| --candidate-limit | 60，允许1–500；提高会增加本地/可能的评分成本 |
+| --format | markdown / json |
+| --save-plan | 仓库外新文件，建议和所选文件SHA256，无正文，不覆盖已有文件 |
+| --tokenizer | 显式tiktoken/cl100k_base；可能首次下载编码，不可用则回退 |
+| --jev-bin / --jev-timeout | jev / 45秒评分期限，另有最多1秒有界清理；不额外重试 |
+| --debug-dir | 显式私有目录，应放目标外；含代码的0600调试文件 |
 
-默认阅读总预算 8000 tokens，首轮上限 6400，剩余 1600 留给补读；`--list-budget 1000` 单独控制实际输出成本，JSON 较长时可提高。`--candidate-limit 60` 控制提交候选。每张 Jev 卡目标约 500 tokens，正文 excerpt 通常更短，全文推荐范围另行计费。参数是初始工程选择，未经最优性验证。
+行号一基闭区间，按LF计行并保留CRLF；bare CR Python无法可靠映射AST，文本降级。Python保留装饰器、多行签名并取最小符号；其他语言、配置和损坏Python只取文本窗口。提取超过300行或预算不足，建议命中附近子范围，标incomplete并保留完整符号范围；清单裁剪计deferred。不是访问白名单。
 
-三类成本分别报告：清单序列化 token 数、推荐代码范围的 token 数、Jev 输入估计和提交判断数。代码成本按读取范围的并集计费，同文件重叠合并。可选 `tiktoken` 使用 `cl100k_base` 并声明编码；否则采用 `ceil(UTF-8 bytes/3)` 估算。即使有 tokenizer，编码也未必与主模型相同，不能称作主模型精确用量。Jev 输入包含每项重复 task、卡片和评分问题，未包含 provider 包装/输出 token；提交数不等于服务端实际请求数，CLI 内置重试次数与实际计费未知。补读成本未测。
+既有本地证据分、候选多样性和半级并列选择暂保留。重复命中、候选池规模可能影响排序代理，尚未证明任务效果；分数不能当相关概率。失败使用明确local_fallback，不显示成Jev分；低confidence(<0.6)标uncertain。relevance、confidence和任务正确率不同。
 
-Jev relevance 为描述性 0–4 score，可小数。confidence/probabilities 是评分分布信息，不是任务正确率。低 confidence (<0.6) 标 uncertain；没有成功结果的候选使用本地相关性名次映射到排序代理（范围 3 至 1），显示 local_fallback，不伪造 Jev 分。分数主导排序，半级以内结合新文件/片段角色、本地证据处理并列；不按分数/token排序，也不用分数阈值宣称无关。过长的关键片段输出包含命中位置的子范围，保留完整符号范围并 deferred。
+## 阅读和补读
 
-已核实 Jev 0.3.2 `jev run --help` 与安装源码：`jev run SPEC -l -j 4 --json` 从 stdin 接收含同一 task 和独立 candidate/id 的 JSONL；不使用 `--field`。成功行为 `{input:对象, answers:{relevance:...}}`；错误行可为 `{input:原始字符串,error:...}`，部分失败退出 2。适配层校验 echoed input、唯一 ID、结果数量与 score/confidence/probabilities 字段，保留成功项，不重复启动批量重试。`--jev-timeout 45` 是整个批量 wall timeout，可调整；退出状态和错误文本不透传。服务/provider 隐含失败细节只作固定有界诊断。
+scripts/read-context.py --repo REPO --range PATH START END；--range可重复，每次合并请求最多300行。超限在交付正文前拒绝，拆成多个请求即可。连续范围只输出一次path头，随后原行号和代码；末行无LF时补一个输出LF。允许清单外安全发现文件。
 
-本地发现与搜索尊重仓库内 `.gitignore`、`.ignore`、`.rgignore` 和安全的根 `.git/info/exclude`，并排除常见依赖、生成目录、密钥文件、二进制、`.jev-context` 与此次 `--debug-dir`。关闭 rg 用户配置、祖先/global ignore 和自动外部 gitdir exclude 解析，避免预处理器执行或仓库外读取；工作树外的 info/exclude 及嵌套独立 Git 仓库的 info/exclude 不加载。ignore 元文件或 `.git`/`info` 若为符号链接，安全降级并报告，不跟随其目标。调试目录建议放在目标仓库外；后续运行若仍用自定义仓库内目录，也须带相同 `--debug-dir`，或将它加入仓库 ignore。文件/目录符号链接均不读取。候选数限制前根据本地证据与来源覆盖选择。零命中尝试一次有界扩展，失败明确报告；没有英文术语的中文需求可能召回不足。
+--plan /outside/plan.json 核对repo和请求涉及文件指纹；清单外可补读。--state /outside/seen.json 只存repo/hash/已返回区间；交集不再返回，完全重复stdout为空且退出0。--repeat 显式重读。源变化后重新检索，用新plan/state；没有state时自行避免重复。
 
-检索工程上限：5000 文件、32 MiB 总量、单文件 1 MiB、16 个词、每词每文件 12 命中、每文件 12 个非指名候选；最多 8 个种子、每种子 6 个一跳补充；显式目录最多 20 文件；完整 Python 范围超过 300 行会截取并 deferred。本地搜索共享约 60 秒期限。超过限额会给诊断，不能据此断言未召回内容无关。本地排序的前三个候选放不下时，也给命中位置子范围和完整符号 deferred，不把本地代理显示为 Jev 分数。
+plan/state父目录需已存在。state必须在目标外、无用户symlink，原子0600保存；面向单代理串行，多进程应各用一个state。macOS系统/tmp和/var别名按真实系统路径处理，用户symlink拒绝。
 
-Python 用 `ast` 选最小完整函数、方法或类，保留装饰器和多行签名；超过提取上限时标 incomplete。语法损坏、配置/文档及其他语言取有界文本窗口并标 extraction_mode。局部导入和同文件定义关系来自 AST；对应测试与跨文件同名引用仍是检索线索，潜在关系不代表准确调用图。
+## 安全、限制与变化
 
-显式 `--debug-dir /path` 才保存私有 run 子目录中的候选卡、评分和报告，不保存 key、原始 CLI stderr 或 API 回显。默认 stdout 只含建议和有界诊断。输入内容是待评价数据，不能改变 relevance 规则；主模型仍应核实重要行为与约束。
+尊重仓库.gitignore/.ignore/.rgignore及安全根.git/info/exclude。禁用rg用户配置、祖先/global ignore和外部gitdir exclude自动解析，不执行预处理器。工作树外及嵌套gitdir exclude不加载；ignore元文件或相关目录symlink时安全降级。排除常见秘密、二进制、依赖/生成目录及symlink，不读key或原CLI stderr。源读取逐级directory fd+O_NOFOLLOW并复查regular/大小，防打开期间symlink替换。
 
-评估入口在同一组标注任务上比较 A（文本窗口+本地排序）、B（AST/一跳扩展+本地排序）、C（同B+Jev）。关键范围用一基闭区间标注；报告候选完整覆盖率与行覆盖率、固定预算推荐完整/行覆盖率、清单/推荐阅读成本、延迟和提交量。离线固定响应只验证流程，明确标 mock；真实 C 如降级不会称作集成成功。小 fixture 的覆盖率无法证明生产仓库的节省比例，也未衡量主模型完成任务的正确率。
+5000文件、32MiB源码捕获预算、1MiB单文件、16词、每词每文件12命中、每文件12非指名候选、8种子/每种子6一跳线索、显式目录20文件、最长提取300行；本地共享约60秒期限。限界诊断不代表内容无关。发现后用directory fd安全捕获源码到私有临时快照；首检索、有界扩展、一跳搜索与AST解析都用同一bytes，普通源码变化和搜索期间symlink换位不会变成旧命中搭新源码。评分前/报告前核验全部入选候选涉及文件的hash，变化拒绝旧建议；读时plan再核验一次。
 
-本次真实评估指标见 [evaluation-results.json](evaluation-results.json)，离线固定响应报告见 [evaluation-offline-results.json](evaluation-offline-results.json)。2026-10-06 的三任务实测首轮各限 640 tokens：A 平均关键完整覆盖 2/3，B/C 为 1；累计推荐阅读 575/806/806，累计清单 680/880/891。真实 C 提交 12 项，三任务均为 jev 成功状态，累计约 2.90 秒；结果未证明 C 比 B 节省阅读成本。默认受限网络里 DNS 失败时降级也已实测，真实调用在允许联网的环境完成。补读成本与生产规模收益尚未测量；当前验证采用 UTF-8 估算，可选 tokenizer 分支和 Python 3.11 本体未运行（本机 Python 3.14.6）。
+0.3.1的source_capture_read_bytes是捕获阶段实际读取（含已拒绝片段），source_fingerprint_read_bytes是两次核验实际读取，source_read_bytes是两者之和；source_capture_bytes是成功捕获内容，snapshot_written_bytes仅计源码快照写入。捕获阶段最多32MiB+1读取、32MiB写入，单次增长拒绝最多1字节lookahead，累计lookahead可多于1；成功命令的两次指纹重读最多额外64MiB，因此目标源码累计读取最多96MiB+1。失败后未返回完整报告时的累计读取未知；rg对快照的读取/临时JSON输出、ignore元数据、debug文件及解释器IO不包含在这些目标源码内容指标中，整机总IO未知。旧0.3.0 source_read_bytes仅计捕获，不能用来声称整次读取上限。latency_seconds记录初次报告生成时点，不含之后的清单整理/debug/最后核验，完整命令时间应由调用方另计。
 
-方法参考：[Aider repo map](https://github.com/Aider-AI/aider/blob/main/aider/website/docs/repomap.md) 的签名、依赖关系及预算选择思想；未复刻其全仓库图排名。Jev 字段语义依据本机 CLI 与其 [官方 primitives](https://docs.typesafe.ai/primitives)、[confidence](https://docs.typesafe.ai/confidence) 文档；首次实现核实以本机契约为准。
+原file-discovery的ignore元数据是活读取，静态symlink预检与配置隔离存在；运行期间应保持ignore元数据稳定，不把本工具称为对抗同UID恶意并发进程的文件系统沙箱。不是全仓事务快照。不宣称这些安全核验具有相同本地IO成本。
 
-本轮扩大评估见 [evaluation-2026-10-06.md](evaluation-2026-10-06.md)：Click 8.1.8 固定 commit、12题、6开发/6留出，B/C复用同一候选快照；四档预算只评分一次。默认评估用 UTF-8 代理计数，关闭清单裁剪、统一按名次截取；生产 CLI 参数和默认策略保持。实际隔离读者的清单、代码、补读、搜索及重复返回另有账本，不能把推荐裸源码成本等同于主模型可见成本。
+0.3.2在创建任何内部临时文件前选择目标外目录，显式传dir，不先调用会写探测文件的gettempdir。按缓存提示、TMPDIR/TEMP/TMP及POSIX常见临时目录顺序检查，跳过目标内位置；没有可用外部目录时失败。搜索临时输出放在已经隔离的私有快照中。可选tokenizer需设置目标外TIKTOKEN_CACHE_DIR/DATA_GYM_CACHE_DIR，或已有安全的默认tempdir缓存；未建立缓存位置或路径进入目标时，在加载编码前报告UTF-8回退。这样库不能因外部目录探测失败而写入cwd；显式空缓存值禁用磁盘缓存，仍可能下载公开编码数据。不修改用户的全局环境变量。最终Git干净或源码hash不变不能单独证明整个运行期间只读。
 
-```bash
-python3 scripts/evaluate.py --repo /private/tmp/jev-eval-click \
-  --tasks references/real-evaluation-tasks.json --read-budget 1024 \
-  --budgets 256,512,1024,2048 --candidate-limit 60 \
-  --snapshot-dir references/runs/2026-10-06/real/snapshots --replay
-```
+一跳关系和测试是线索，不是精确调用图。极长命中行的Jev摘录可能只含行首；不能对评分器未见内容假定准确判断。秘密文件名排除不是任意秘密识别；Jev显式启用前确认代码允许送provider。
 
-捕获需换成新空目录并移除 `--replay`；这会产生新的真实提交。`--max-submitted 1000` 在全批采集后、首个评分前检查数量；它不是跨运行配额守卫。快照私有保存候选、缓存代码和已验证分数，不保存 key/CLI stderr；评分前核对仓库版本和缓存内容。重放验证任务、仓库/源码、候选/卡、检索边界、计数器和评分规则指纹，不启动评分。报告的重放成本是原始测量，新增提交见 `submitted_this_run`。
+## Jev与成本
 
-离线固定响应是 mock，真实捕获是 external_attempt，重放是 replay_external_attempt；不能把它们混为真实调用。gold只在采集/评分后计算覆盖，后验最短gold前缀只作离线参考。所有完整范围/行覆盖都是物理位置指标，人工未复核时不等同于语义充分性。人工需判断的内容集中在 [human-review-2026-10-06.md](human-review-2026-10-06.md)。
+Jev0.3.2 JSONL：jev run SPEC -l -j 4 --json。校验完整echo、唯一id、数量、score/confidence/probabilities；保留成功项，失败不变零分，不回显input/error/stderr。POSIX超时终止评分进程组、清理有界；独立脱离session的子进程不保证被杀，但不会无限等待pipe。
+
+生产无评分缓存。实验重放绑定任务、内容/卡、repo、规则和计数器指纹，不能把旧c1/c2分套到新代码。mock/external_attempt/replay_external_attempt区分。Jev是判断器，不解释、不提取、不补召回；既有报告未证明总体阅读成本收益，保持可选。新增真实提交上限1200，见 [账本](../evidence/jev-submissions.json)，每批评分前预检；不是HTTP请求/费用预算。
+
+推荐成本为范围并集的裸源码估计，清单为序列化输出估计；主模型实际还接收搜索/行号/补读/重复。UTF-8代理和cl100k_base都不是服务端usage。Jev输入含重复task/卡/问题，未含provider封装/输出；提交项不是HTTP请求数，重试/账单未知。未知不估作费用。
+
+## 验证与历史材料
+
+python3 -m unittest discover -s tests -q；python3 scripts/evaluate.py --offline-responses tests/fixtures/jev-responses.json。
+
+标准测试依赖的fixture和两份冻结检索均随交付，私有旧快照缺失不导致标准测试失败。生产不导入试验。实验专用：test_retrieval_experiment.py及test_evaluate.py的ablation/replay；核心：retrieval/selection/pipeline/reader/jev_adapter/tokens；read_experiment/visibility是计量工具。测试数不替代任务验收。
+
+旧Click已见，原提案仍proposed/human_reviewed=false/eligible_for_scoring=false。重新采集只用新目录，不覆盖旧证据。evaluate.py --snapshot-dir NEW默认会外部评分，显式offline响应才保证零提交；--max-submitted只单批预检，不是跨运行守卫。原始公开范围见 [runs说明](runs/README.md)，旧报告结论保持。
+
+评估专用 task_experiment.py 的baseline/local/jev方法拥有相同files/regex search/heading/EOF-clamped reads；jev每run只首批评分，前置共享账本预留，至多60项，后续advice本地。此预算控制用于本次1200项工程上限，不是生产自动启用规则；生产CLI默认仍local。task-file只读本run/task.txt，stdout与完整argv元数据分别留存，真实HTTP/usage/bill未知。

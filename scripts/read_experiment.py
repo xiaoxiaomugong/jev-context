@@ -22,7 +22,7 @@ import subprocess
 import sys
 import tempfile
 
-from jev_context.retrieval import _discover, _rg_options, _safe_path
+from jev_context.retrieval import _discover, _rg_options, _safe_path, source_lines
 from jev_context.tokens import VisibilityLedger
 
 
@@ -117,7 +117,7 @@ def _read(repo, ranges, ledger, path, start, end, run_dir):
     raw = safe.read_bytes()
     if b"\0" in raw:
         raise ReaderFailure("binary content is unavailable")
-    lines = raw.decode("utf-8").splitlines(keepends=True)
+    lines = source_lines(raw.decode("utf-8"))
     if not 1 <= start <= end <= len(lines):
         raise ReaderFailure("requested inclusive line range is unavailable")
     key = (relative, start, end)
@@ -173,7 +173,7 @@ def _search(repo, term, path, run_dir):
                 line = raw_source.rstrip("\r\n")
                 hits.append(f"{relative}:{data['line_number']}:{line}\n")
                 source_ranges.append(dict(path=relative, start_line=data["line_number"],
-                                          source_lines=raw_source.splitlines(keepends=True)))
+                                          source_lines=source_lines(raw_source)))
                 if len(hits) > 30:
                     break
         if len(hits) > 30:

@@ -20,3 +20,12 @@ dist/
 !/references/runs/README.md
 !/references/runs/2026-10-06/retrieval-ablation/baseline/scripts/jev_context/retrieval.py
 !/references/runs/2026-10-06/retrieval-ablation/trial-v2/retrieval.py
+
+# Publish selected evaluation summaries; retain raw evidence and handoffs locally.
+/evidence/**
+!/evidence/**/
+!/evidence/jev-submissions.json
+!/evidence/jev-pilot-v1/reader-costs.json
+!/evidence/new-evaluation-v1/report.md
+/docs/acceptance-plan.md
+/docs/continuation.md

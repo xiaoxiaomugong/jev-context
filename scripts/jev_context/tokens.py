@@ -2,11 +2,16 @@
 
 import math
 from collections import defaultdict
+from .safe_io import tokenizer_cache_is_external
 
 
 class TokenCounter:
-    def __init__(self, use_tokenizer=True):
+    def __init__(self, use_tokenizer=False, *, readonly_repo=None):
         self.encoding = None
+        self.diagnostic = None
+        if use_tokenizer and readonly_repo is not None and not tokenizer_cache_is_external(readonly_repo):
+            use_tokenizer = False
+            self.diagnostic = 'tokenizer requires an established external cache; using UTF-8 fallback'
         if use_tokenizer:
             try:
                 import tiktoken

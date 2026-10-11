@@ -16,6 +16,9 @@ import tempfile
 import time
 import tokenize
 
+from jev_context.source_snapshot import capture_sources
+from jev_context.safe_io import temporary_root
+
 
 MAX_FILES = 5000
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
@@ -46,6 +49,11 @@ STOP_WORDS = {"the", "and", "for", "with", "from", "that", "this", "when", "into
 
 def _tokens(text: str) -> int:
     return max(1, math.ceil(len(text.encode("utf-8")) / 3))
+
+
+def source_lines(text: str) -> list[str]:
+    """Keep source bytes and LF line numbers shared by ripgrep and file reads."""
+    return io.StringIO(text).readlines()
 
 
 def _terms(task: str) -> list[str]:
@@ -126,7 +134,12 @@ def _discover(repo: Path, excluded: list[Path], diagnostics: list[str], trace: d
         return []
     command = ["rg", *_rg_options(repo), "--files", "--hidden", "--null", "--no-require-git"]
     try:
-        with tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as errors:
+        scratch = temporary_root(repo)
+    except ValueError:
+        diagnostics.append('temporary storage outside the read-only target unavailable')
+        return []
+    try:
+        with tempfile.TemporaryFile(dir=scratch) as output, tempfile.TemporaryFile(dir=scratch) as errors:
             result = subprocess.run(command, cwd=repo, stdout=output, stderr=errors, timeout=20, check=False)
             output.seek(0)
             # File discovery itself is bounded; names are never printed to stdout.
@@ -173,10 +186,9 @@ def _discover(repo: Path, excluded: list[Path], diagnostics: list[str], trace: d
 
 
 def _rg_hits(repo: Path, files: list[str], terms: list[str], diagnostics: list[str], deadline: float | None = None) -> dict[str, dict[int, list[str]]]:
+    """Search only a private source snapshot; discovery already applied ignores."""
     hits: dict[str, dict[int, list[str]]] = {}
     if not terms or not files:
-        return hits
-    if not _safe_ignore_metadata(repo, diagnostics):
         return hits
     allowed = set(files)
     deadline = deadline if deadline is not None else time.monotonic() + 30
@@ -186,9 +198,10 @@ def _rg_hits(repo: Path, files: list[str], terms: list[str], diagnostics: list[s
             if remaining <= 0:
                 diagnostics.append("local search time limit reached; retained prior bounded matches")
                 return hits
-            command = ["rg", *_rg_options(repo), "--json", "--fixed-strings", "--ignore-case", "--max-count", str(MAX_HITS_PER_FILE_TERM), "--max-columns", "4000", "--max-columns-preview", "--file", "-", "--", *files[offset:offset + 150]]
+            command = ["rg", "--no-config", "--no-ignore", "--json", "--fixed-strings", "--ignore-case", "--max-count", str(MAX_HITS_PER_FILE_TERM), "--max-columns", "4000", "--max-columns-preview", "--file", "-", "--", *files[offset:offset + 150]]
             try:
-                with tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as errors:
+                # repo is the private captured tree, outside the original target.
+                with tempfile.TemporaryFile(dir=repo) as output, tempfile.TemporaryFile(dir=repo) as errors:
                     result = subprocess.run(command, cwd=repo, input=(term + "\n").encode("utf-8"), stdout=output, stderr=errors, timeout=min(20, remaining), check=False)
                     output.seek(0)
                     consumed = 0
@@ -219,12 +232,16 @@ class _Source:
     def __init__(self, path: str, text: str, diagnostics: list[str], parse_python: bool = True):
         self.path = path
         self.text = text
-        self.lines = text.splitlines(keepends=True)
+        self.lines = source_lines(text)
         self.tree = None
         self.scopes: list[dict] = []
         self.imports: list[ast.AST] = []
         self.import_owners: dict[int, ast.AST | None] = {}
         self.decorator_lines: list[tuple[int, int]] = []
+        if parse_python and Path(path).suffix == ".py" and re.search(r"\r(?!\n)", text):
+            # AST treats bare CR as newlines, while rg numbers only LF lines.
+            parse_python = False
+            diagnostics.append(f"python bare CR newline fallback: {path}")
         if parse_python and Path(path).suffix == ".py":
             try:
                 self.tree = ast.parse(text, filename=path)
@@ -322,6 +339,7 @@ def _candidate(source: _Source, line: int, signals: list[str], score: float, rel
         "path": source.path, "start_line": start, "end_line": end,
         "symbol": symbol, "kind": kind, "signature": signature,
         "excerpt": excerpt, "excerpt_start_line": excerpt_start, "excerpt_end_line": excerpt_end,
+        "excerpt_incomplete": excerpt != ''.join(source.lines[excerpt_start - 1:excerpt_end]).rstrip(),
         "retrieval_signals": signals, "relations": [relation] if relation else [],
         "estimated_read_tokens": _tokens("".join(source.lines[start - 1:end])),
         "extraction_mode": mode, "incomplete": start != full_start or end != full_end,
@@ -524,24 +542,54 @@ def collect(repo: Path, task: str, terms: list[str], *, paths: list[str] | None 
     stage_elapsed = {}
     deadline = time.monotonic() + 60
     diagnostics: list[str] = []
+    io_metrics = dict(source_read_bytes=0, source_read_lookahead_bytes=0,
+                     source_capture_bytes=0, snapshot_written_bytes=0,
+                     source_captured_files=0, source_skipped_files=0,
+                     source_capture_limit_reached=False)
     if not repo.is_dir():
-        return {"candidates": [], "diagnostics": ["repository directory unavailable"], "status": "degraded", "files": {}}
+        return {"candidates": [], "diagnostics": ["repository directory unavailable"], "status": "degraded", "files": {}, "io_metrics": io_metrics}
     excluded = [Path(p).resolve() for p in (excluded_dirs or [])]
     scan_trace = {}
     files = _discover(repo, excluded, diagnostics, scan_trace if trace else None)
     stage_elapsed["discovery"] = round(time.perf_counter() - started, 6)
     if not files:
         status = "degraded" if any("unavailable" in d or "failed" in d for d in diagnostics) else "empty"
-        return {"candidates": [], "diagnostics": diagnostics[:12], "status": status, "files": {}}
+        return {"candidates": [], "diagnostics": diagnostics[:12], "status": status, "files": {}, "io_metrics": io_metrics}
+    started = time.perf_counter()
+    with capture_sources(repo, files, excluded, diagnostics, max_files=MAX_FILES,
+                         max_total_bytes=MAX_TOTAL_BYTES, max_file_bytes=MAX_FILE_BYTES) as snapshot:
+        stage_elapsed["source_snapshot"] = round(time.perf_counter() - started, 6)
+        if trace:
+            scan_trace["scanned_count"] = len(snapshot.sources)
+            scan_trace["scanned_bytes"] = snapshot.io_metrics["snapshot_written_bytes"]
+            scan_trace["safety_excluded"] += snapshot.safety_excluded
+            scan_trace["scan_limit_skipped"] += len(snapshot.scan_limit_files)
+            scan_trace["scan_limit_files"].extend(snapshot.scan_limit_files)
+        if not snapshot.sources:
+            status = "degraded" if snapshot.safety_excluded or snapshot.scan_limit_files else "empty"
+            return {"candidates": [], "diagnostics": diagnostics[:12], "status": status,
+                    "files": {}, "io_metrics": dict(snapshot.io_metrics)}
+        result = _collect_snapshot(snapshot, repo, task, terms, paths=paths, symbols=symbols,
+            candidate_limit=candidate_limit, expand=expand, ast_enabled=ast_enabled,
+            trace=trace, diagnostics=diagnostics, scan_trace=scan_trace,
+            stage_elapsed=stage_elapsed, deadline=deadline)
+        result["io_metrics"] = dict(snapshot.io_metrics)
+        return result
+
+
+def _collect_snapshot(snapshot, original_repo, task, terms, *, paths, symbols,
+                      candidate_limit, expand, ast_enabled, trace, diagnostics,
+                      scan_trace, stage_elapsed, deadline):
+    repo = snapshot.root
+    files = list(snapshot.sources)
     source_cache: dict[str, _Source | None] = {}
 
     def source_for(path: str) -> _Source | None:
         if path not in source_cache:
-            safe = _safe_path(repo, path, excluded)
             try:
-                raw = safe.read_bytes() if safe else b"\0"
+                raw = snapshot.sources[path]
                 source_cache[path] = _Source(path, raw.decode("utf-8"), diagnostics, parse_python=ast_enabled or bool(symbols)) if b"\0" not in raw else None
-            except (OSError, UnicodeError):
+            except (KeyError, UnicodeError, ValueError):
                 source_cache[path] = None
         return source_cache[path]
 
@@ -586,7 +634,7 @@ def collect(repo: Path, task: str, terms: list[str], *, paths: list[str] | None 
     for path_hint in paths or []:
         candidate_path = Path(path_hint)
         try:
-            relative = str(candidate_path.relative_to(repo)) if candidate_path.is_absolute() else candidate_path.as_posix()
+            relative = str(candidate_path.relative_to(original_repo)) if candidate_path.is_absolute() else candidate_path.as_posix()
         except ValueError:
             diagnostics.append("explicit path outside repository skipped")
             continue

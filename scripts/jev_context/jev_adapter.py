@@ -10,10 +10,14 @@ from __future__ import annotations
 
 import json
 import math
+import os
 from pathlib import Path
 import re
+import signal
 import subprocess
 from typing import Any
+
+from .retrieval import source_lines
 
 
 def _canonical(value: Any) -> str:
@@ -125,14 +129,15 @@ def score_candidates(
             canonical = _canonical(state)
             expected[candidate_id] = canonical
             rows.append(canonical)
-    except (TypeError, ValueError, OverflowError):
+    except (TypeError, ValueError, OverflowError, RecursionError):
         result["status"] = "invalid_input"
         diagnose("jev_invalid_candidate_ids_or_json")
         return result
     argv = [jev_bin, "run", str(spec_path), "-l", "-j", str(jobs), "--json"]
     try:
         process = subprocess.Popen(argv, stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   start_new_session=os.name == "posix")
     except (FileNotFoundError, PermissionError, OSError):
         result["status"] = "unavailable"
         diagnose("jev_cli_unavailable")
@@ -144,8 +149,28 @@ def score_candidates(
             input=("\n".join(rows) + "\n").encode("utf-8"), timeout=timeout)
     except subprocess.TimeoutExpired:
         timed_out = True
-        process.kill()
-        stdout_bytes, stderr_bytes = process.communicate()
+        if os.name == "posix":
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except OSError:
+                process.kill()
+        else:
+            process.kill()
+        try:
+            stdout_bytes, stderr_bytes = process.communicate(timeout=.5)
+        except subprocess.TimeoutExpired as cleanup:
+            # An independently detached descendant may still own the pipes.
+            # Preserve accumulated output and bound cleanup instead of waiting
+            # indefinitely for that process to close its inherited descriptors.
+            stdout_bytes, stderr_bytes = cleanup.output or b"", cleanup.stderr or b""
+            for stream in (process.stdin, process.stdout, process.stderr):
+                if stream is not None:
+                    stream.close()
+            try:
+                process.wait(timeout=.5)
+            except subprocess.TimeoutExpired:
+                pass
+            diagnose("jev_timeout_output_cleanup_bounded")
         diagnose("jev_timeout_completed_lines_retained")
     stdout = stdout_bytes.decode("utf-8", errors="replace")
     stderr = stderr_bytes.decode("utf-8", errors="replace")
@@ -153,7 +178,7 @@ def score_candidates(
     seen: set[str] = set()
     duplicate_ids: set[str] = set()
     output_lines = 0
-    for raw_line in stdout.splitlines(keepends=True):
+    for raw_line in source_lines(stdout):
         if not raw_line.strip():
             continue
         # A timeout can interrupt a write; only complete newline-terminated
@@ -164,7 +189,7 @@ def score_candidates(
         output_lines += 1
         try:
             record = json.loads(raw_line, object_pairs_hook=_unique_object)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, RecursionError):
             diagnose("jev_invalid_json")
             continue
         if not isinstance(record, dict):
@@ -174,7 +199,7 @@ def score_candidates(
         if "error" in record and isinstance(state, str):
             try:
                 state = json.loads(state, object_pairs_hook=_unique_object)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, RecursionError):
                 diagnose("jev_invalid_error_input")
                 continue
         if not isinstance(state, dict):
@@ -191,7 +216,7 @@ def score_candidates(
         seen.add(candidate_id)
         try:
             matched = _canonical(state) == expected[candidate_id]
-        except (TypeError, ValueError, OverflowError):
+        except (TypeError, ValueError, OverflowError, RecursionError):
             matched = False
         if not matched:
             diagnose("jev_input_echo_mismatch")

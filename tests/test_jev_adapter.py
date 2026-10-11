@@ -5,10 +5,13 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import os
+import signal
 from pathlib import Path
 import sys
 import tempfile
 import textwrap
+import time
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -159,6 +162,45 @@ sys.exit(2)
         self.assertEqual(result["status"], "partial")
         self.assertEqual(set(result["scores"]), {"c2"})
 
+    def test_deep_json_record_keeps_an_earlier_valid_score(self):
+        cli = self.fake_cli("""
+emit(success(rows[0]))
+print('[' * 20000 + '0' + ']' * 20000, flush=True)
+""")
+        result = self.score(cli)
+        self.assertEqual(result['status'], 'partial')
+        self.assertEqual(set(result['scores']), {'c1'})
+        self.assertEqual(result['completed'], 1)
+        self.assertTrue({'jev_invalid_json', 'jev_invalid_record'} & set(result['diagnostics']))
+
+    def test_deep_error_input_keeps_other_valid_scores(self):
+        cli = self.fake_cli("""
+emit(success(rows[0]))
+emit({'input': '[' * 20000 + '0' + ']' * 20000,
+      'error': 'PRIVATE_ERROR_SENTINEL'})
+""")
+        result = self.score(cli)
+        self.assertEqual(result['status'], 'partial')
+        self.assertEqual(set(result['scores']), {'c1'})
+        self.assertTrue({'jev_invalid_error_input', 'jev_invalid_input_echo'} & set(result['diagnostics']))
+
+    def test_deep_candidate_json_does_not_crash_request_validation(self):
+        nested = 0
+        for _ in range(20000):
+            nested = [nested]
+        self.candidates[0]['nested'] = nested
+        cli = self.fake_cli('emit(success(rows[0]))')
+        result = self.score(cli)
+        if result['calls']:
+            # Python 3.14 can encode this nesting; valid JSON need not be refused.
+            self.assertEqual(result['status'], 'partial')
+            self.assertEqual(set(result['scores']), {'c1'})
+            self.assertTrue(Path(cli).with_suffix('.invocations').exists())
+        else:
+            self.assertEqual(result['status'], 'invalid_input')
+            self.assertEqual(result['scores'], {})
+            self.assertFalse(Path(cli).with_suffix('.invocations').exists())
+
     def test_missing_line_is_not_an_implicit_zero(self):
         cli = self.fake_cli("emit(success(rows[0]))")
         result = self.score(cli)
@@ -176,6 +218,59 @@ time.sleep(4)
         self.assertEqual(result["status"], "timeout")
         self.assertEqual(set(result["scores"]), {"c1"})
         self.assertEqual(Path(cli).with_suffix(".invocations").read_text().count("invocation"), 1)
+
+    def test_unicode_line_separators_in_echo_preserve_jsonl_records(self):
+        for separator in ("\x85", "\u2028", "\u2029"):
+            with self.subTest(separator=repr(separator)):
+                self.candidates[0]["excerpt"] = "CONFIDENTIAL_BODY_SENTINEL" + separator + "tail"
+                cli = self.fake_cli("""
+print(json.dumps(success(rows[0]), ensure_ascii=False), flush=True)
+emit(success(rows[1]))
+""")
+                result = self.score(cli)
+                self.assertEqual(result["status"], "ok")
+                self.assertEqual(set(result["scores"]), {"c1", "c2"})
+
+    @unittest.skipUnless(os.name == "posix", "POSIX process groups required")
+    def test_timeout_bounds_child_pipe_cleanup_and_keeps_completed_scores(self):
+        cli = self.fake_cli("""
+import subprocess
+emit(success(rows[0]))
+subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(4)'],
+                 stdin=subprocess.DEVNULL)
+time.sleep(4)
+""")
+        started = time.monotonic()
+        result = self.score(cli, timeout=1)
+        elapsed = time.monotonic() - started
+        self.assertLess(elapsed, 2.5, "descendant pipes extended the whole-batch timeout")
+        self.assertEqual(result["status"], "timeout")
+        self.assertEqual(set(result["scores"]), {"c1"})
+        self.assertEqual(Path(cli).with_suffix(".invocations").read_text().count("invocation"), 1)
+
+    @unittest.skipUnless(os.name == "posix", "POSIX process groups required")
+    def test_timeout_cleanup_is_bounded_when_child_leaves_process_group(self):
+        cli = self.fake_cli("""
+import subprocess
+child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(4)'],
+                         stdin=subprocess.DEVNULL, start_new_session=True)
+Path(__file__).with_suffix('.child-pid').write_text(str(child.pid))
+emit(success(rows[0]))
+time.sleep(4)
+""")
+        started = time.monotonic()
+        try:
+            result = self.score(cli, timeout=1)
+        finally:
+            marker = Path(cli).with_suffix(".child-pid")
+            if marker.exists():
+                try:
+                    os.kill(int(marker.read_text()), signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+        self.assertLess(time.monotonic() - started, 2.5)
+        self.assertEqual(result["status"], "timeout")
+        self.assertEqual(set(result["scores"]), {"c1"})
 
     def test_missing_cli_has_no_calls_and_safe_fallback(self):
         result = self.score(str(self.root / "missing jev"))

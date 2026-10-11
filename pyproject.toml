@@ -1,8 +1,8 @@
 [project]
 name = "jev-context"
-version = "0.1.0"
-description = "Read-only local retrieval and Jev-scored budgeted reading advice"
-requires-python = ">=3.11"
+version = "0.3.2"
+description = "Read-only local code reading advice with explicitly optional Jev scoring"
+requires-python = ">=3.12"
 dependencies = []
 
 [project.optional-dependencies]

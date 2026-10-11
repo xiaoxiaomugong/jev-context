@@ -1,0 +1,42 @@
+{
+  "batches": [
+    {
+      "cards_sha256": "f0cda16c6b967589c57a7d1c640897e3d2cf4c004ec1fb70b8b2d14efeb0f79f",
+      "estimated_jev_input_utf8_proxy": 35920,
+      "http_requests": null,
+      "id": "seen-FK04-pilot-v1",
+      "latency_seconds": 8.337024875014322,
+      "preflight_candidates": 45,
+      "provider_cost": null,
+      "provider_usage": null,
+      "reserved_candidates": 45,
+      "rules_sha256": "dd4d3ced4276e78e195aa891b1006dd01218d31019968f22ff58432af8075543",
+      "status": "ok",
+      "submitted_candidates": 45,
+      "validated_scores": 45
+    },
+    {
+      "calls": 45,
+      "cards_sha256": "4c43c5a3e82ec0d8eae1877192387265de113d2a490b55de86e21aa45805bad8",
+      "http_requests": null,
+      "id": "93281b13df4902b4da48b7dada9ad81e",
+      "preflight_candidates": 45,
+      "provider_cost": null,
+      "provider_usage": null,
+      "reserved_candidates": 45,
+      "reserved_remaining": 0,
+      "rules_sha256": "dd4d3ced4276e78e195aa891b1006dd01218d31019968f22ff58432af8075543",
+      "status": "ok",
+      "submitted_candidates": 45,
+      "task_sha256": "1a0ffe6c38f367737372f2762784d9c443653016174ac241e90e9b0150626bdd",
+      "validated_scores": 45
+    }
+  ],
+  "candidate_submission_limit": 1200,
+  "http_requests": null,
+  "provider_cost": null,
+  "provider_usage": null,
+  "reserved_total": 0,
+  "scope": "long-task-starting-2026-10-07",
+  "submitted_total": 90
+}

@@ -289,7 +289,12 @@ def evaluate_ablation(repo, tasks, *, baseline_retrieval, read_budget=2048,
         for candidate in control["candidates"]:
             candidate["estimated_read_tokens"] = counter.count("".join(control["files"][candidate["path"]]
                 [candidate["start_line"] - 1:candidate["end_line"]]))
-        check = {"matches": pools["R0"]["candidates"] == control["candidates"] and pools["R0"]["files"] == control["files"],
+        # 0.2 adds an explicit excerpt flag; an absent legacy flag means false.
+        # True clipping flags and every other field/range/source remain strict.
+        normalize = lambda rows: [dict(row, excerpt_incomplete=row.get('excerpt_incomplete', False)) for row in rows]
+        check = {"matches": normalize(pools["R0"]["candidates"]) == normalize(control["candidates"]) and pools["R0"]["files"] == control["files"],
+                 "exact_candidate_match": pools['R0']['candidates'] == control['candidates'],
+                 "comparison": "legacy excerpt_incomplete defaults to false; all other fields and source strict",
                  "disabled_current_candidate_fingerprint": _fingerprint(control["candidates"]),
                  "control_elapsed_seconds": round(time.perf_counter() - started, 6)}
         if not check["matches"]:
